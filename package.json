@@ -1,5 +1,5 @@
 {
-  "name": "cds-parsers",
+  "name": "cds-parsers-amd",
   "version": "1.0.0",
   "description": "Common Data Structures Parsers",
   "main": "index.js",

@@ -18,7 +18,9 @@
     "underscore": "1.8.3", 
     "angular": "latest", 
     "angular-material": "latest", 
-    "material-icons": "latest"
+    "material-icons": "latest", 
+    "requirejs": "latest", 
+    "linqjs-amd": "latest" 
   }
 
 }

@@ -1,14 +1,15 @@
-var app = angular.module('app', ['ngMaterial']);
-
-var indexController = app.controller('indexController', function($scope){
-    var vm = {
-        data: {
-
-        }, 
-        methods: {
-
-        }
-    };
-    
-    angular.copy(vm, $scope);
+require(['mssql.parser'], function(mssqlParser){
+  
+   var app = angular.module('app', [])
+   .factory('$mssqlParser', function(){
+     return mssqlParser;
+   })
+   .controller('demoCtrl', function($scope, $mssqlParser){
+     $scope.msg = $mssqlParser; 
+   }); 
+  
+   angular.bootstrap(document, ['app']);
+   
 });
+
+
