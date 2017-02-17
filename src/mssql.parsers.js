@@ -45,7 +45,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  * SOFTWARE. 
  **/
-define('mssql.parser', ['linqjs'], function(from){
+define('mssql.parser', ['linqjs'], function(linq){
     var _parser = {};
     _parser.models = {};
     
@@ -264,11 +264,11 @@ define('mssql.parser', ['linqjs'], function(from){
 
             table.columns = _parser.columnScript(tableScript);
 
-            from(table.primaryKey.colunms).forEach(function (pk) {
+            linq.From(table.primaryKey.colunms).ForEach(function (pk) {
 
-                var column = from(table.columns).where(function (c) {
+                var column = linq.From(table.columns).Where(function (c) {
                     return (c.name == pk.name);
-                }).firstOrDefault();
+                }).FirstOrDefault();
                 if (!column) return true;
 
                 column.isPrimary = true;
@@ -317,3 +317,32 @@ String.prototype.indexOfCloser = function findClosesOf(start, opener, closer) {
     }
 };
 
+Object.deepExtend = function (destination, source) {
+    for (var property in source) {
+        if (source[property] && source[property].constructor &&
+         source[property].constructor === Object) {
+            destination[property] = destination[property] || {};
+            arguments.callee(destination[property], source[property]);
+        } else {
+            destination[property] = source[property];
+        }
+    } 
+    return destination;
+};
+
+String.prototype.replaceAll = function (search, replacement) {
+    var ret = this.toString().replace(search, replacement);
+     
+    while (ret.indexOf(search)!=-1) {
+        ret = ret.replace(search, replacement);
+    }
+    return ret;
+
+};
+
+String.prototype.trim = function () {
+    return this.replace(/^\s+|\s+$/gm, '');
+};
+String.isNullOrWhiteSpace = function (value) {
+    return value == null || value.toString().trim()=="";
+};

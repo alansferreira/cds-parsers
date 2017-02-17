@@ -18,7 +18,8 @@
     "angular": "latest", 
     "angular-material": "latest", 
     "material-icons": "latest", 
-
+    "ng-prettyjson": "latest",
+    
     "requirejs": "2.3.2", 
     "linqjs-amd": "0.1.0" 
   }

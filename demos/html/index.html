@@ -1,15 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="app">
+<html lang="en">
     <head>
         <title></title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="bower_components/angular-material/angular-material.min.css" rel="stylesheet">
+        <link href="bower_components/ng-prettyjson/dist/ng-prettyjson.min.js" rel="stylesheet">
+
+        
     </head>
     <body ng-controller="demoCtrl">
         <md-content >
-            {{msg}}
+            <md-input-container>
+                <label>Input</label>
+                <textarea ng-model="data.input" ng-change="textChange()"></textarea>
+            </md-input-container>
 
+            <pretty-json json="data.output"></pretty-json>
         </md-content>
         
         <script src="bower_components/requirejs/require.js"></script>
@@ -20,6 +27,8 @@
         <script src="bower_components/angular-aria/angular-aria.min.js"></script>
         <script src="bower_components/angular-messages/angular-messages.min.js"></script>
         <script src="bower_components/angular-material/angular-material.min.js"></script>
+
+        <script src="bower_components/ng-prettyjson/dist/ng-prettyjson.min.js"></script>
         
         <script src="../../src/mssql.parsers.js"></script>
 
