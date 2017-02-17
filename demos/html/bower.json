@@ -15,12 +15,12 @@
     "tests"
   ], 
   "dependencies": { 
-    "underscore": "1.8.3", 
     "angular": "latest", 
     "angular-material": "latest", 
     "material-icons": "latest", 
-    "requirejs": "latest", 
-    "linqjs-amd": "latest" 
+
+    "requirejs": "2.3.2", 
+    "linqjs-amd": "0.1.0" 
   }
 
 }
