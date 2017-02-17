@@ -18,7 +18,9 @@
   "homepage": "https://github.com/alansferreira/cds-parsers#readme", 
 
   "dependencies": {
+    "requirejs": "2.3.2",
     "browsify": "0.0.4", 
-    "underscore": "1.8.3"
+    "underscore": "1.8.3", 
+    "linqjs": "0.0.6" 
   }
 }
