@@ -1,0 +1,24 @@
+{
+  "name": "cds-parsers",
+  "version": "1.0.0",
+  "description": "Common Data Structures Parsers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alansferreira/cds-parsers.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alansferreira/cds-parsers/issues"
+  },
+  "homepage": "https://github.com/alansferreira/cds-parsers#readme", 
+
+  "dependencies": {
+    "browsify": "0.0.4", 
+    "underscore": "1.8.3"
+  }
+}

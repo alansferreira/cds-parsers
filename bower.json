@@ -1,0 +1,21 @@
+{
+  "name": "cds-parsers",
+  "description": "Common Data Structures Parsers",
+  "main": "index.js",
+  "authors": [
+    "Alan <alan.da.silva.ferreira@hotmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/alansferreira/cds-parsers",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ], 
+  "dependencies": { 
+    "underscore": "1.8.3"
+  }
+
+}
