@@ -1,10 +1,21 @@
 require(['mssql.parser'], function(mssqlParser){
   
-   var app = angular.module('app', ['ngMaterial', 'ngPrettyJson'])
-   .factory('$mssqlParser', function(){
-     return mssqlParser;
-   })
-   .controller('demoCtrl', function($scope, $mssqlParser){
+    var app = angular.module('app', ['ngMaterial', 'ngPrettyJson'])
+    .factory('$mssqlParser', function(){
+        return mssqlParser;
+    })
+    .config(function($mdThemingProvider) {
+        $mdThemingProvider.theme('altTheme')
+        .primaryPalette('grey',{'default': '900'})
+        .accentPalette('grey',{'default': '700'})
+        .dark();  
+        
+        $mdThemingProvider.theme('default').dark();
+        
+        $mdThemingProvider.setDefaultTheme('altTheme');
+        $mdThemingProvider.alwaysWatchTheme(true);
+    })
+    .controller('demoCtrl', function($scope, $mssqlParser){
         $scope.data = {
             input: 'ddd', output: ''
         };
