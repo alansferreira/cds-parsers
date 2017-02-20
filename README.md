@@ -15,7 +15,7 @@ On demand Html
 ```html
 <!-- html -->
 <script src="{bower_components}/requirejs/require.js"></script>
-<script src="{bower_components}/cds-parsers-amd/dist/mssql.parsers.min.js"></script>
+<script src="{bower_components}/cds-parsers-amd/src/mssql.parsers.js"></script>
 <script>
 var parser = require('mssql.parser');
 var tables = parser.tableScript('CREATE TABLE table1 ( column1 int, column2 varchar(50) ');
