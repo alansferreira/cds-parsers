@@ -1,13 +1,12 @@
 {
   "name": "cds-parsers-amd",
-  "version": "0.1.35-0",
+  "version": "0.1.38-0",
   "versionedSources": "bower.json",
   "description": "Common Data Structures Parsers",
   "main": "index.js",
 
   "scripts": {
-    "prepublish": "node_modules/.bin/semver-sync -b", 
-    "postpublish": "node_modules/.bin/bower register cds-parsers-amd https://github.com/alansferreira/cds-parsers.git"
+    "semver-sync": "node_modules/.bin/semver-sync -b"
   },
   
   "repository": {

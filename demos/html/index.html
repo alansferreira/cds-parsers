@@ -25,31 +25,39 @@
             </md-content>
             <md-content>
                 <h2>Edit output json</h2>
-                <md-content layout='column' ng-repeat="t in data.editedOutput">
+                <md-content layout='column' flex ng-repeat="t in data.editedOutput">
                     <md-content layout='row' ng-repeat="c in t.columns">
                         <md-input-container>
-                            <label>Rename {{c.name}}</label>
+                            <label>Rename {{c.oldName}}</label>
                             <input type="text" ng-model='c.name'>
                         </md-input-container>
-                        
-                        <md-select ng-model='c.type'>
-                            <md-option value="int">int</md-option>
-                            <md-option value="varchar">varchar</md-option>
-                            <md-option value="char">char   </md-option>
-                        </md-select>
+                        <md-input-container>
+                            <md-select ng-model='c.type'>
+                                <md-option value="int">int</md-option>
+                                <md-option value="varchar">varchar</md-option>
+                                <md-option value="char">char   </md-option>
+                            </md-select>
+                        </md-input-container>
                     </md-content>
                 </md-content>
             </md-content>
             <md-content>
-                <h2>Translate Edited output json</h2>
-                
-                
+                <h2>Recreate tables</h2>
                 <span layout='column' ng-repeat="t in data.editedOutput">
                     CREATE TABLE {{t.name}} (
                     <span ng-repeat="c in t.columns">
                        {{c.name}} {{c.type}} <span ng-if="c.precision &amp;&amp; !c.scale">({{c.precision}})</span> <span ng-if="c.precision &amp;&amp; c.scale">({{c.precision}}, {{c.scale}})</span> 
                     </span>
                     )
+                </span>
+
+                <h2>Create Java classes</h2>
+                <span layout='column' ng-repeat="t in data.editedOutput">
+                    public class {{t.name}} {
+                    <span ng-repeat="c in t.columns">
+                       private {{c.type}} {{c.name}}; 
+                    </span>
+                    }
                 </span>
 
             </md-content>
@@ -69,7 +77,7 @@
         <!--<script src="bower_components/golden-layout/dist/goldenlayout.min.js"></script>-->
 
 
-        <script src="bower_components/cds-parsers/src/mssql.parsers.js"></script>
+        <script src="bower_components/cds-parsers-amd/src/mssql.parsers.js"></script>
 
         <script src="app.js"></script>
     </body>

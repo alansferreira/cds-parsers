@@ -66,4 +66,6 @@ require(['mssql.parser'], function(mssqlParser){
 
 >`npm i`
 
->`npm run-script build-1`
+>`npm run semver-sync`
+
+>`npm publish`

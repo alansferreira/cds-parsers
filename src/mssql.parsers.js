@@ -272,7 +272,7 @@ define('mssql.parser', ['linqjs'], function(linq){
         var sysname = argName;
 
         if(sysname.startsWith('['))sysname = sysname.substring(1);
-        if(sysname.endsWith('['))sysname = sysname.substring(0, sysname.length - 1);
+        if(sysname.endsWith(']'))sysname = sysname.substring(0, sysname.length - 1);
         
         return sysname;
     }

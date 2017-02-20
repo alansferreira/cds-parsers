@@ -1,5 +1,7 @@
-require(['mssql.parser'], function(mssqlParser){
-  
+require(['mssql.parser', 'linqjs'], function(mssqlParser, Enumerable){
+    var from  = Enumerable.From;
+
+
     var app = angular.module('app', ['ngMaterial', 'ngPrettyJson'])
     .factory('$mssqlParser', function(){
         return mssqlParser;
@@ -28,6 +30,10 @@ require(['mssql.parser'], function(mssqlParser){
             try {
                 $scope.data.output = $mssqlParser.tableScript($scope.data.input);
                 $scope.data.editedOutput = angular.copy($scope.data.output, []);
+                from($scope.data.editedOutput).ForEach(function(t){
+                    t.oldName = t.name;
+                    from(t.columns).ForEach(function(c){c.oldName = c.name;});
+                });
             } catch (error) {
                 $scope.data.output = error;
             }
