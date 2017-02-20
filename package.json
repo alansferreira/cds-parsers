@@ -9,7 +9,7 @@
     "build-1": "node_modules/.bin/semver-sync -b",
     
     "publish-bower": "bower register cds-parsers-amd https://github.com/alansferreira/cds-parsers.git",
-    "publish-npm":   "npm publish cds-parsers-amd https://github.com/alansferreira/cds-parsers.git"
+    "publish-npm":   "npm publish"
     
   },
   "repository": {

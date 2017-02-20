@@ -22,7 +22,7 @@
     
     "requirejs": "2.3.2", 
     "linqjs-amd": "0.1.0", 
-    "cds-parsers": "latest",
+    "cds-parsers-amd": "latest",
 
     "golden-layout": "latest"
   }
