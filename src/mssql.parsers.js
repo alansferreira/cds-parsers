@@ -21,30 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  * SOFTWARE. 
  **/
-
-/**
- * The MIT License (MIT) 
- * 
- * Copyright (c) 2016 Alan da Silva Ferreira 
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights 
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
- * copies of the Software, and to permit persons to whom the Software is 
- * furnished to do so, subject to the following conditions: 
- * 
- * The above copyright notice and this permission notice shall be included in all 
- * copies or substantial portions of the Software. 
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
- * SOFTWARE. 
- **/
 define('mssql.parser', ['linqjs'], function(linq){
     var _parser = {};
     _parser.models = {};
@@ -103,20 +79,6 @@ define('mssql.parser', ['linqjs'], function(linq){
                 IS_NOT_NULL: 18
             }
         }
-
-        // COLUMN_SPECIFICATION: /(\[[^\]]+\]|[a-zA-Z0-9_]+)[ ]+((\[[^\]]+\]|[a-zA-Z0-9_]+)([ ]{0,}\([ ]{0,}(([0-9]+)([ ]{0,},[ ]{0,}[0-9])?)[ ]{0,}\))?)(([ ]{1,}(PRIMARY[ ]{1,}KEY([ ]{1,}ASC|[ ]{1,}DESC)))?[ ]{1,}IDENTITY([ ]{0,}\([ ]{0,}[0-9]+[ ]{0,},[ ]{0,}[0-9]+[ ]{0,}\))?[ ]{1,}((NOT[ ]{1,})?NULL))?[ ]{0,}/igm
-        //  [id] [int] PRIMARY KEY ASC IDENTITY(1,1)  NOT NULL,
-
-        //	[vFrte] [decimal](10, 2) NULL,
-        //	[id] [int] IDENTITY(1,1) NOT NULL,
-        //	[dCorri] [datetime] NOT NULL,
-        //	[idOrdServc] [int] NULL,
-        //	[idIncid] [int] NULL,
-        //	[idSttus] [int] NULL,
-        //	[dExcl] [datetime] NULL,
-        //	[vEspra] [decimal] (10, 2) NULL,
-        //	[vCanct] [decimal]  (10 ) NULL,
-        //	[qHrEspra] [int] NULL,
     };
     
     _parser.models.column = function (initialData) {
@@ -131,6 +93,8 @@ define('mssql.parser', ['linqjs'], function(linq){
         this.increment = { seed: 0, step: 1 };
 
         Object.deepExtend(this, initialData || {});
+
+        this.name = clearSysname(this.name);
     };
 
     _parser.models.table = function (initialData) {
@@ -142,11 +106,17 @@ define('mssql.parser', ['linqjs'], function(linq){
         this.foregnKeys = []; //[new _parser.models.foregnKeyContraint()]
 
         Object.deepExtend(this, initialData || {});
+
+        this.name = clearSysname(this.name);
+
     };
     _parser.models.primaryKey = function (initialData) {
         this.name = "";
         this.colunms = []; //[new _parser.models.columnIndexSpec()]
         Object.deepExtend(this, initialData || {});
+
+        this.name = clearSysname(this.name);
+
     };
     _parser.models.SORT = { ASC: "ASC", DESC: "DESC" };
     _parser.models.columnIndexSpec = function (initialData) {
@@ -154,6 +124,8 @@ define('mssql.parser', ['linqjs'], function(linq){
         this.sort = _parser.models.SORT.ASC;
 
         Object.deepExtend(this, initialData || {});
+        
+        this.name = clearSysname(this.name);
     };
 
     _parser.databaseScript = function (scriptData) {
@@ -184,7 +156,6 @@ define('mssql.parser', ['linqjs'], function(linq){
 
                 src: columnSpec
             });
-
             columns.push(currentColumn);
 
         });
@@ -296,6 +267,15 @@ define('mssql.parser', ['linqjs'], function(linq){
         }
 
     };
+
+    function clearSysname(argName){
+        var sysname = argName;
+
+        if(sysname.startsWith('['))sysname = sysname.substring(1);
+        if(sysname.endsWith('['))sysname = sysname.substring(0, sysname.length - 1);
+        
+        return sysname;
+    }
 
     return _parser;
 

@@ -1,13 +1,16 @@
 {
   "name": "cds-parsers-amd",
-  "version": "0.0.1-3",
+  "version": "0.1.3-0",
+  "versionedSources": "bower.json",
   "description": "Common Data Structures Parsers",
   "main": "index.js",
   "scripts": {
-    "bower_publish": "bower register cds-parsers https://github.com/alansferreira/cds-parsers.git",
-    "npm_publish": "bower register cds-parsers https://github.com/alansferreira/cds-parsers.git",
-    "build": "npm version prerelease",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    
+    "build-1": "node_modules/.bin/semver-sync -b",
+    
+    "publish-bower": "bower register cds-parsers-amd https://github.com/alansferreira/cds-parsers.git",
+    "publish-npm":   "npm publish cds-parsers-amd https://github.com/alansferreira/cds-parsers.git"
+    
   },
   "repository": {
     "type": "git",
@@ -24,5 +27,9 @@
     "browsify": "0.0.4",
     "underscore": "1.8.3",
     "linqjs": "0.0.6"
+  }, 
+  "devDependencies": {
+    "semver-sync": "1.2.2"
   }
+
 }
