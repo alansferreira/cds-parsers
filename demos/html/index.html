@@ -5,19 +5,54 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="bower_components/angular-material/angular-material.min.css" rel="stylesheet">
-        <link href="bower_components/ng-prettyjson/dist/ng-prettyjson.min.css" rel="stylesheet">
+        <!--<link href="bower_components/ng-prettyjson/dist/ng-prettyjson.min.css" rel="stylesheet">-->
 
-        <link href="bower_components/golden-layout/src/css/goldenlayout-dark-theme.css" rel="stylesheet">
+        <!--<link href="bower_components/golden-layout/src/css/goldenlayout-dark-theme.css" rel="stylesheet">-->
 
     </head>
-    <body ng-controller="demoCtrl">
-        <md-content >
-            <md-input-container>
-                <label>Input</label>
-                <textarea ng-model="data.input" ng-change="textChange()"></textarea>
-            </md-input-container>
+    <body ng-controller="demoCtrl" md-theme="docs-dark" >
+        <md-content layout='row'>
+            <md-content>
+                <h2>Input sql script</h2>
+                <md-input-container>
+                    <label>Input</label>
+                    <textarea ng-model="data.input" ng-change="textChange()"></textarea>
+                </md-input-container>
+            </md-content> 
+            <md-content>
+                <h2>Output json</h2>
+                <pretty-json json="data.output"></pretty-json>
+            </md-content>
+            <md-content>
+                <h2>Edit output json</h2>
+                <md-content layout='column' ng-repeat="t in data.editedOutput">
+                    <md-content layout='row' ng-repeat="c in t.columns">
+                        <md-input-container>
+                            <label>Rename {{c.name}}</label>
+                            <input type="text" ng-model='c.name'>
+                        </md-input-container>
+                        
+                        <md-select ng-model='c.type'>
+                            <md-option value="int">int</md-option>
+                            <md-option value="varchar">varchar</md-option>
+                            <md-option value="char">char   </md-option>
+                        </md-select>
+                    </md-content>
+                </md-content>
+            </md-content>
+            <md-content>
+                <h2>Translate Edited output json</h2>
+                
+                
+                <span layout='column' ng-repeat="t in data.editedOutput">
+                    CREATE TABLE {{t.name}} (
+                    <span ng-repeat="c in t.columns">
+                       {{c.name}} {{c.type}} <span ng-if="c.precision &amp;&amp; !c.scale">({{c.precision}})</span> <span ng-if="c.precision &amp;&amp; c.scale">({{c.precision}}, {{c.scale}})</span> 
+                    </span>
+                    )
+                </span>
 
-            <pretty-json json="data.output"></pretty-json>
+            </md-content>
         </md-content>
         
         <script src="bower_components/requirejs/require.js"></script>
@@ -31,10 +66,10 @@
 
         <script src="bower_components/ng-prettyjson/dist/ng-prettyjson.min.js"></script>
 
-        <script src="bower_components/golden-layout/dist/goldenlayout.min.js"></script>
+        <!--<script src="bower_components/golden-layout/dist/goldenlayout.min.js"></script>-->
 
 
-        <script src="../../src/mssql.parsers.js"></script>
+        <script src="bower_components/cds-parsers/src/mssql.parsers.js"></script>
 
         <script src="app.js"></script>
     </body>

@@ -5,23 +5,29 @@ require(['mssql.parser'], function(mssqlParser){
         return mssqlParser;
     })
     .config(function($mdThemingProvider) {
-        $mdThemingProvider.theme('altTheme')
-        .primaryPalette('grey',{'default': '900'})
-        .accentPalette('grey',{'default': '700'})
-        .dark();  
-        
-        $mdThemingProvider.theme('default').dark();
-        
-        $mdThemingProvider.setDefaultTheme('altTheme');
-        $mdThemingProvider.alwaysWatchTheme(true);
+
+        // Configure a dark theme with primary foreground yellow
+
+        $mdThemingProvider.theme('docs-dark', 'default')
+        .primaryPalette('grey')
+        .dark();
+
     })
+
+    
     .controller('demoCtrl', function($scope, $mssqlParser){
         $scope.data = {
-            input: 'ddd', output: ''
+            input: ' create table t1(       ' +
+                   '\r     id int,          ' +
+                   '\r     name varchar(50) ' +
+                   '\r )                    ', 
+            output: {}, 
+            editedOutput: {}
         };
         $scope.textChange = function(){
             try {
                 $scope.data.output = $mssqlParser.tableScript($scope.data.input);
+                $scope.data.editedOutput = angular.copy($scope.data.output, []);
             } catch (error) {
                 $scope.data.output = error;
             }
