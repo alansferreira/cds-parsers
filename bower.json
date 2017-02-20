@@ -1,6 +1,6 @@
 {
   "name": "cds-parsers-amd",
-  "version": "0.1.3-0",
+  "version": "0.1.26-0",
   "description": "Common Data Structures Parsers",
   "main": "index.js",
   "authors": [
@@ -15,6 +15,14 @@
     "test",
     "tests"
   ], 
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alansferreira/cds-parsers.git"
+  },
+  
+  "moduleType": [
+    "amd"
+  ],
   "dependencies": { 
     "requirejs": "2.3.2",
     "linqjs-amd": "0.1.0"
