@@ -1,6 +1,6 @@
 {
   "name": "cds-parsers-amd",
-  "version": "0.1.38-0",
+  "version": "0.1.39-0",
   "versionedSources": "bower.json",
   "description": "Common Data Structures Parsers",
   "main": "index.js",
