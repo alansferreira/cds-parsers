@@ -1,6 +1,6 @@
 {
   "name": "cds-parsers-amd",
-  "version": "0.0.1-0",
+  "version": "0.0.1-1",
   "description": "Common Data Structures Parsers",
   "main": "index.js",
   "scripts": {
@@ -19,12 +19,11 @@
   "bugs": {
     "url": "https://github.com/alansferreira/cds-parsers/issues"
   },
-  "homepage": "https://github.com/alansferreira/cds-parsers#readme", 
-
+  "homepage": "https://github.com/alansferreira/cds-parsers#readme",
   "dependencies": {
     "requirejs": "2.3.2",
-    "browsify": "0.0.4", 
-    "underscore": "1.8.3", 
-    "linqjs": "0.0.6" 
+    "browsify": "0.0.4",
+    "underscore": "1.8.3",
+    "linqjs": "0.0.6"
   }
 }
