@@ -1,15 +1,7 @@
 
 # Root Node components
 node_modules
-
-# Root Bower components and proxy
-bower_components
-.bowerrc
-
-# Demos html
-demos/bower_components
-demos/html/.bowerrc
-
+scripts
 
 
 # Windows image file caches

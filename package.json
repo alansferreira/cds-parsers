@@ -22,7 +22,7 @@
   "dependencies": {
     "requirejs": "2.3.2",
     "underscore": "1.8.3",
-    "linqjs": "0.0.6"
+    "linq": "3.0.8"
   }, 
   "devDependencies": {
     "semver-sync": "1.2.2", 
