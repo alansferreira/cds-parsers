@@ -10,7 +10,7 @@ var fs = require('fs');
 // });
 
 
-fs.readFile('scripts/db2.tables.test.sql', function(err, data){
+fs.readFile('scripts/db2.full-script.sql', function(err, data){
     var script = new String(data);
     var tables = db2Parser.parseTable(script);
     console.log(tables);

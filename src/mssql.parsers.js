@@ -47,7 +47,7 @@ define('mssql.parser', ['linqjs'], function(linq){
                 COLUMNS_SPEC: 3
             },
             FIELDS_DEF: {
-                EXPRESSION: / {0,},? {0,}\[?([^\)\(\]]+)\]? +(ASC|DESC)/img,
+                EXPRESSION: / {0,},? {0,}\[?([^\)\(\]]+)\]? +(ASC|DESC)/ig,
                 CAPTURES_INDEXES: {
                     FIELD_NAME: 1,
                     SORT_TYPE: 2
