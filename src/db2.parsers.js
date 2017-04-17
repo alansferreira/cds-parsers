@@ -2,20 +2,23 @@
 
 const sortModel = { ASC: "ASC", DESC: "DESC" };
 const regexes = {
-    COMMENT: /(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/)|(\/\/.*)/g,
+    SINGLE_COMMENT: /--[^\n\r]+[\r\n]/g,
+    FULL_COMMENT: /(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/)|(\/\/.*)/g,
 
     DATABASE_START_POINT: /(((CREATE)|(ALTER)) {1,}(DATABASE)|(USE)) {1,}([a-zA-Z0-9]+)/igm,
 
     CREATE_TABLE_HEADER: {
-        REGEX: /(CREATE)[ ]{1,}TABLE[ ]{1,}((\"?([^\"]+))\"?\.)((\"?([^\"]+))\"?)[ ]{0,}\(/ig,
+        REGEX: /(CREATE|ALTER)[ ]{1,}TABLE[ ]{1,}(((\"([^\"]+)\")|\w+)\.)((\"([^\"]+)\")|\w+)[ ]{0,}\(/ig,
         CAP_INDEX: {
             COMMAND_TYPE: 1,
-            SCHEMA_NAME: 4,
-            TABLE_NAME: 7,
+            SCHEMA_NAME: 3,
+            SCHEMA_NAME_WRAPPED: 5,
+            TABLE_NAME: 8,
+            TABLE_NAME_WRAPPED: 6,
         }
     },
     ALTER_TABLE_HEADER: {
-        REGEX: /(ALTER)[ ]{1,}TABLE[ ]{1,}((\"?([^\"]+))\"?\.)((\"?([^\"]+))\"?)[ ]{0,}\(/ig,
+        REGEX: /(ALTER)[ ]{1,}TABLE[ ]{1,}(((\"([^\"]+)\")|\w+)\.)((\"([^\"]+)\")|\w+)[ ]{0,}/ig,
         CAP_INDEX: {
             COMMAND_TYPE: 1,
             SCHEMA_NAME: 4,
@@ -44,17 +47,19 @@ const regexes = {
     },
 
     TABLE_COLUMN: {
-        REGEX: /[\(,]?[ ]{0,}(\"?([^\"]+))\"?([ ]+(\"?(\w+))\"?[ ]{0,}([ ]{0,}\([ ]{0,}(([0-9]+)([ ]{0,},[ ]{0,}([0-9]+))?)[ ]{0,}\))?)([ ]{1,}(FOR[ ]{1,}[^ ]+[ ]{1,}DATA))?([ ]{1,}(NOT[ ]{1,})?NULL)?([ ]{1,}(WITH[ ]{1,}DEFAULT[ ]{1,})([^ ]+))?([ ]{1,}(GENERATED +BY +DEFAULT +AS +IDENTITY([ ]{0,}\([^\)]+\))))?[ ]{0,}[,]{0,}[ ]{0,}([ ]{1,}(PRIMARY[ ]{1,}KEY([ ]{1,}ASC|[ ]{1,}DESC)))?[,\)] ?/ig,
+        //REGEX: /[\(,]?[ ]{0,}(\"?([^\"]+))\"?([ ]+(\"?(\w+))\"?[ ]{0,}([ ]{0,}\([ ]{0,}(([0-9]+)([ ]{0,},[ ]{0,}([0-9]+))?)[ ]{0,}\))?)([ ]{1,}(FOR[ ]{1,}[^ ]+[ ]{1,}DATA))?([ ]{1,}(NOT[ ]{1,})?NULL)?([ ]{1,}(WITH[ ]{1,}DEFAULT[ ]{1,})([^ ]+))?([ ]{1,}(GENERATED +BY +DEFAULT +AS +IDENTITY([ ]{0,}\([^\)]+\))))?[ ]{0,}[,]{0,}[ ]{0,}([ ]{1,}(PRIMARY[ ]{1,}KEY([ ]{1,}ASC|[ ]{1,}DESC)))?[,\)] ?/ig,
+        REGEX: /((\"([^\"]+)\")|\w+)([ ]+((\"([^\"]+)\")|\w+)([ ]{0,}\([ ]{0,}(([0-9]+)([ ]{0,},[ ]{0,}([0-9]+))?)[ ]{0,}\))?)[^,]+/ig,
         CAP_INDEX: {
-            NAME: 2,
+            NAME_WRAPPED: 3,
+            NAME: 1,
             DATA_TYPE: 5,
-            PRECISION: 8,
-            SCALE: 10,
-            IS_IDENTITY: 18,
+            PRECISION: 10,
+            SCALE: 12,
+            //IS_IDENTITY: 18,
             //IDENTITY_SEED: 15,
             //IDENTITY_STEP: 16,
-            IS_NOT_NULL: 14,
-            IS_PRIMARY: 99,
+            //IS_NOT_NULL: 14,
+            //IS_PRIMARY: 99,
         }
     }
 };
@@ -142,13 +147,13 @@ function parseTableScript(scriptData){
     script = clearCommentsAndLines(script);
 
     iterateRegex(regexes.CREATE_TABLE_HEADER.REGEX, script, function (regexp, inputText, match) {
-        var tableScript = script.substring(match.index, script.indexOfCloser(match.index + match[0].length, "(", ")") + 1);
+        var tableScript = script.substring(match.index + match[0].length, script.indexOfCloser(match.index + match[0].length, "(", ")") + 1);
         var tableConstraints = [];
 
-        var tableSchema = match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.SCHEMA_NAME];
-        var tableName = match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.TABLE_NAME];
+        var tableSchema = match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.SCHEMA_NAME] || match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.SCHEMA_NAME_WRAPPED];
+        var tableName = match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.TABLE_NAME] || match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.TABLE_NAME_WRAPPED];
         
-        var table = from(tables).where(function(t){return t.name = tableName && t.schema == tableSchema; }).firstOrDefault();
+        var table = from(tables).where(function(t){return t.name == tableName && t.schema == tableSchema; }).firstOrDefault();
         
         if(!table){
             table = new Table({
@@ -196,20 +201,25 @@ function parseColumnScript(scriptColumns){
     iterateRegex(regexes.TABLE_COLUMN.REGEX, script, function (regexp, inputText, match) {
         var columnSpec = match[0];
         var currentColumn = new Column({
-            name: match[regexes.TABLE_COLUMN.CAP_INDEX.NAME],
+            name: match[regexes.TABLE_COLUMN.CAP_INDEX.NAME_WRAPPED] || match[regexes.TABLE_COLUMN.CAP_INDEX.NAME],
             type: match[regexes.TABLE_COLUMN.CAP_INDEX.DATA_TYPE],
             precision: match[regexes.TABLE_COLUMN.CAP_INDEX.PRECISION],
             scale: match[regexes.TABLE_COLUMN.CAP_INDEX.SCALE],
-            isPrimary: !!match[regexes.TABLE_COLUMN.CAP_INDEX.IS_PRIMARY],
-            isAutoIncrement: !!match[regexes.TABLE_COLUMN.CAP_INDEX.IS_IDENTITY],
-            increment: {
-                seed: match[regexes.TABLE_COLUMN.CAP_INDEX.IDENTITY_SEED],
-                step: match[regexes.TABLE_COLUMN.CAP_INDEX.IDENTITY_STEP]
-            },
-            isNullable: !match[regexes.TABLE_COLUMN.CAP_INDEX.IS_NOT_NULL],
+            // isPrimary: !!match[regexes.TABLE_COLUMN.CAP_INDEX.IS_PRIMARY],
+            // isAutoIncrement: !!match[regexes.TABLE_COLUMN.CAP_INDEX.IS_IDENTITY],
+            // increment: {
+            //     seed: match[regexes.TABLE_COLUMN.CAP_INDEX.IDENTITY_SEED],
+            //     step: match[regexes.TABLE_COLUMN.CAP_INDEX.IDENTITY_STEP]
+            // },
+            // isNullable: !match[regexes.TABLE_COLUMN.CAP_INDEX.IS_NOT_NULL],
 
             src: columnSpec
         });
+
+        // PARSE IDENTITY, NULLABLE... STUFF HERE!!
+
+
+
         columns.push(currentColumn);
 
     });
@@ -293,19 +303,21 @@ function iterateRegex(regexp, inputText, callback) {
 
 };
 function clearCommentsAndLines(content){
-     var contentAux = content;
-     while (regexes.COMMENT.test(contentAux)) {
-        contentAux = contentAux.replace(regexes.COMMENT, "");
+    var contentAux = content.replaceAll(regexes.SINGLE_COMMENT, "");
+     
+    contentAux = contentAux.replaceAll("\t", " ").replaceAll("\r", " ").replaceAll("\n", " ");
+
+    while (regexes.FULL_COMMENT.test(contentAux)) {
+        contentAux = contentAux.replace(regexes.FULL_COMMENT, "");
     }
 
-    contentAux = contentAux.replaceAll("\t", " ").replaceAll("\r", " ").replaceAll("\n", " ");
     return contentAux;
 }
 function clearSysname(argName) {
     var sysname = argName;
 
-    if (sysname.startsWith('[')) sysname = sysname.substring(1);
-    if (sysname.endsWith(']')) sysname = sysname.substring(0, sysname.length - 1);
+    if (sysname.startsWith('"')) sysname = sysname.substring(1);
+    if (sysname.endsWith('"')) sysname = sysname.substring(0, sysname.length - 1);
 
     return sysname;
 };
