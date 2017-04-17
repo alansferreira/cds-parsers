@@ -7,12 +7,19 @@ const regexes = {
     DATABASE_START_POINT: /(((CREATE)|(ALTER)) {1,}(DATABASE)|(USE)) {1,}([a-zA-Z0-9]+)/igm,
 
     CREATE_TABLE_HEADER: {
-        REGEX: /(CREATE|ALTER) {1,}(TABLE) {1,}(((\[[^\]]+\]|[a-zA-Z0-9_]+)\.(\[[^\]]+\]|[a-zA-Z0-9_]+))|(\[[^\]]+\]|[a-zA-Z0-9_]+))[ ]{0,}\([ ]{0,}/igm,
+        REGEX: /(CREATE)[ ]{1,}TABLE[ ]{1,}((\"?([^\"]+))\"?\.)((\"?([^\"]+))\"?)[ ]{0,}\(/ig,
         CAP_INDEX: {
             COMMAND_TYPE: 1,
-            SCHEMA_NAME: 5,
-            TABLE_NAME: 6,
-            TABLE_NAME_ALTERNATIVE: 7,
+            SCHEMA_NAME: 4,
+            TABLE_NAME: 7,
+        }
+    },
+    ALTER_TABLE_HEADER: {
+        REGEX: /(ALTER)[ ]{1,}TABLE[ ]{1,}((\"?([^\"]+))\"?\.)((\"?([^\"]+))\"?)[ ]{0,}\(/ig,
+        CAP_INDEX: {
+            COMMAND_TYPE: 1,
+            SCHEMA_NAME: 4,
+            TABLE_NAME: 7,
         }
     },
     PK: /(PRIMARY[ ]{1,}KEY)[ ]{1,}\(([^\)]+)+\)/ig,
@@ -24,27 +31,29 @@ const regexes = {
         }
     },
 
-    CONSTRAINT_FOREIGN_KEY_HEADER: {
-        REGEX: /CONSTRAINT +\[?([^\]]+)\]? {0,}(FOREIGN {0,}KEY)[^\(]+\(/i,
-        CONSTRANTI_NAME: 1,
+    FOREIGN_KEY: {
+        REGEX: /(CONSTRAINT +([^ ]+))?([ ]{1,}FOREIGN {0,}KEY)[ ]{0,}\(([^\)]+)\)([ ]{0,}REFERENCES)[ ]{1,}([^ ]+)([ ]{0,}\(([^\)]+)\))?([ ]{1,}ON(([ ]{1,}(DELETE)[ ]{1,}(RESTRICT|CASCADE))?)?(([ ]{1,}(UPDATE)[ ]{1,}(RESTRICT|CASCADE))?)?)?/ig,
+        CAP_INDEX: {
+            CONSTR_NAME: 2,
+            COLUMNS: 4,
+            REF_TABLE: 6,
+            REF_COLUMNS: 7,
+            DELETE_ACT_TYPE: 13,
+            UPDATE_ACT_TYPE: 17,
+        }
     },
-    CONSTRAINT_FOREIGN_KEY_HEADER: {
-        REGEX: /CONSTRAINT +\[?([^\]]+)\]? {0,}(FOREIGN {0,}KEY)[^\(]+\(/i,
-        CONSTRANTI_NAME: 1,
-    },
-
 
     TABLE_COLUMN: {
-        REGEX: /(\[[^\]]+\]|[a-zA-Z0-9_]+)[ ]+((\[[^\]]+\]|[a-zA-Z0-9_]+)([ ]{0,}\([ ]{0,}(([0-9]+)([ ]{0,},[ ]{0,}([0-9]))?)[ ]{0,}\))?)([ ]{1,}(FOR[ ]{1,}[^ ]+[ ]{1,}DATA))?([ ]{1,}(NOT[ ]{1,})?NULL)?([ ]{1,}(WITH[ ]{1,}DEFAULT[ ]{1,})([^ ]+))?([ ]{1,}(GENERATED +BY +DEFAULT +AS +IDENTITY([ ]{0,}\([^\)]+\))))?[ ]{0,}[,]{0,}[ ]{0,}([ ]{1,}(PRIMARY[ ]{1,}KEY([ ]{1,}ASC|[ ]{1,}DESC)))?[,\)] ?/ig,
+        REGEX: /[\(,]?[ ]{0,}(\"?([^\"]+))\"?([ ]+(\"?(\w+))\"?[ ]{0,}([ ]{0,}\([ ]{0,}(([0-9]+)([ ]{0,},[ ]{0,}([0-9]+))?)[ ]{0,}\))?)([ ]{1,}(FOR[ ]{1,}[^ ]+[ ]{1,}DATA))?([ ]{1,}(NOT[ ]{1,})?NULL)?([ ]{1,}(WITH[ ]{1,}DEFAULT[ ]{1,})([^ ]+))?([ ]{1,}(GENERATED +BY +DEFAULT +AS +IDENTITY([ ]{0,}\([^\)]+\))))?[ ]{0,}[,]{0,}[ ]{0,}([ ]{1,}(PRIMARY[ ]{1,}KEY([ ]{1,}ASC|[ ]{1,}DESC)))?[,\)] ?/ig,
         CAP_INDEX: {
-            NAME: 1,
-            DATA_TYPE: 3,
-            PRECISION: 6,
-            SCALE: 8,
-            IS_IDENTITY: 13,
-            IDENTITY_SEED: 15,
-            IDENTITY_STEP: 16,
-            IS_NOT_NULL: 10,
+            NAME: 2,
+            DATA_TYPE: 5,
+            PRECISION: 8,
+            SCALE: 10,
+            IS_IDENTITY: 18,
+            //IDENTITY_SEED: 15,
+            //IDENTITY_STEP: 16,
+            IS_NOT_NULL: 14,
             IS_PRIMARY: 99,
         }
     }
@@ -90,6 +99,30 @@ function PrimaryKey(initialData) {
 
 };
 
+function ColumnReferenceSpec(initialData){
+    this.name = "";
+    this.targetName = "";
+    Object.deepExtend(this, initialData || {});
+
+    this.name = clearSysname(this.name);
+    this.targetName = clearSysname(this.targetName);
+
+}
+function ForeignKey(initialData) {
+    this.name = "";
+    this.columns = []; //[new ColumnReferenceSpec()]
+    
+    this.targetTable  = "";
+    this.targetColumns= [];
+    this.deleteActionType= "";
+    this.updateActionType= "";
+    
+    Object.deepExtend(this, initialData || {});
+
+    this.name = clearSysname(this.name);
+
+};
+
 const SORT_TYPE = { ASC: "ASC", DESC: "DESC" };
 
 function ColumnIndexSpec(initialData) {
@@ -112,13 +145,22 @@ function parseTableScript(scriptData){
         var tableScript = script.substring(match.index, script.indexOfCloser(match.index + match[0].length, "(", ")") + 1);
         var tableConstraints = [];
 
-        var table = new Table({
-            src: tableScript,
-            schema: match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.SCHEMA_NAME],
-            name: match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.TABLE_NAME] || match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.TABLE_NAME_ALTERNATIVE]
-        });
+        var tableSchema = match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.SCHEMA_NAME];
+        var tableName = match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.TABLE_NAME];
+        
+        var table = from(tables).where(function(t){return t.name = tableName && t.schema == tableSchema; }).firstOrDefault();
+        
+        if(!table){
+            table = new Table({
+                src: tableScript,
+                schema: tableSchema,
+                name: tableName
+            });
 
-        ////TABLE CONSTRAINTS
+            tables.push(table);
+        }
+
+        //TABLE CONSTRAINTS
         //iterateRegex(regexes.CONSTRAINT_INLINE, tableScript, function (regexp, inputText, match) {
         //    tableConstraints.push(match);
 
@@ -128,39 +170,18 @@ function parseTableScript(scriptData){
         table.columns = parseColumnScript(tableScript);
 
         table.primaryKey = parsePrimaryKey(tableScript);
-        
+
         from(table.primaryKey.columns).forEach(function(pkc){
             var c = from(table.columns).where(function(c){return c.name==pkc.name;}).firstOrDefault();
             if(!c) return true;
             c.isPrimary = true;
         });        
 
-        ////iterateRegex(regexes.CONSTRAINT_PK_HEADER.REGEX, tableScript, function (regexp, inputText, match) {
-        ////    //tableConstraints.push(match);
-
-        ////    table.primaryKey = new PrimaryKey(); 
-        ////    iterateRegex(regexes.CONSTRAINT_PK_HEADER.FIELDS_DEF.REGEX, match[regexes.CONSTRAINT_PK_HEADER.CAP_INDEX.COLUMNS_SPEC], function (regexp1, inputText1, match1) {
-        ////        table.primaryKey.colunms.push(new ColumnIndexSpec({
-        ////            name: match1[regexes.CONSTRAINT_PK_HEADER.FIELDS_DEF.CAP_INDEX.FIELD_NAME],
-        ////            sort: match1[regexes.CONSTRAINT_PK_HEADER.FIELDS_DEF.CAP_INDEX.SORT_TYPE]
-        ////        }));
-
-        ////    });
-        ////    tableScript = tableScript.substring(0, match.index) + tableScript.substring(match.index + match[0].length);
-        ////});
-
-        ////TABLE COLUMNS
-        //iterateRegex(regexes.COLUMN_SPECIFICATION, tableScript, function (regexp, inputText, match) {
-        //    table.columns.push(new _parser.columnScript(match[0]));
-
-        //    tableScript = tableScript.substring(0, match.index) + tableScript.substring(match.index + match[0].length);
-        //});
+        table.foreignKeys = parseForeignKeys(tableScript);
 
         for (var c in table.columns) {
             c.table = table;
         }
-
-        tables.push(table);
 
     });
 
@@ -211,6 +232,46 @@ function parsePrimaryKey(script){
     });
 
     return primaryKey;
+};
+
+
+function parseForeignKeys(script){
+    var expr = regexes.FOREIGN_KEY.REGEX;
+    var captures = regexes.FOREIGN_KEY.CAP_INDEX;
+    var foreignKeys = [];
+    var script = script.toString();
+    script = clearCommentsAndLines(script);
+
+    iterateRegex(expr, script, function (regexp, inputText, match) {
+        var foreignKey = new ForeignKey({
+            name: match[captures.CONSTR_NAME], 
+            columns: match[captures.COLUMNS].split(','), 
+            targetTable: match[captures.REF_TABLE],
+            targetColumns: match[captures.REF_COLUMNS].split(","),
+            deleteActionType: match[captures.DELETE_ACT_TYPE],
+            updateActionType: match[captures.UPDATE_ACT_TYPE],
+            mapReference: {}
+        });
+
+        var l1 = foreignKey.columns.length;
+        var l2 = foreignKey.targetColumns.length;
+
+        var isColumnsLengthEquals = l1==l2;
+        if(!isColumnsLengthEquals) {
+            
+            console.error(`Foreign Key '${foreignKey.name}' reference columns no match!`);
+        }
+        for (var c = 0; c < (l1>l2?l1:l2); c++) {
+            var columnName = clearSysname(foreignKey.columns[c]);
+            var targetColumnName = clearSysname(foreignKey.targetColumns[c]);
+
+            foreignKey.mapReference[columnName] = targetColumnName;
+        }
+
+        foreignKeys.push(foreignKey);
+    });
+
+    return foreignKeys;
 };
 
 function parseDatabaseScript(scriptData){
