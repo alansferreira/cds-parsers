@@ -1,6 +1,6 @@
 var {from} = require('linq');
 
-var db2Parser = require('./src/db2.parsers');
+var db2Parser = require('./src/db2-table.parser');
 var fs = require('fs');
 
 var tables1 = [];
