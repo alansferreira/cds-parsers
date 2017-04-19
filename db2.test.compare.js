@@ -47,13 +47,15 @@ from(tables1).forEach(function(t1){
     });
 
     if(t1.errors.length!=0){
-        console.log(`\r\n Comparasion errors(${t1.errors.length}) between '${t1.name}' x '${t2.name}':`);
+        var str = `\r\n\r\n Comparasion errors(${t1.errors.length}) between '${t1.name}' x '${t2.name}':`;
+        console.log(str);
+        fs.appendFileSync("./result.txt", str);
         for (var err = 0; err < t1.errors.length; err++) {
             var error = t1.errors[err];
             console.error(error);
+            fs.appendFileSync("./result.txt", '\r\n' + error);
         }
     }
-
     //out2 += `\r\n${t.name}.${c.name} as ${c.type}(${c.precision}, ${c.scale})`;
 });
 
