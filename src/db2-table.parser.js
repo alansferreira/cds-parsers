@@ -370,7 +370,13 @@ String.isNullOrWhiteSpace = function (value) {
 
 var db2_module = {
     parseTable: parseTableScript, 
-    parseColumn: parseColumnScript
+    parseColumn: parseColumnScript, 
+    Table: Table, 
+    Column: Column,
+    ColumnIndexSpec: ColumnIndexSpec, 
+    ColumnReferenceSpec: ColumnReferenceSpec, 
+    ForeignKey: ForeignKey
+    
 };
 
 module.exports = db2_module;
