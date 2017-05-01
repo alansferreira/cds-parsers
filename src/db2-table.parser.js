@@ -35,14 +35,16 @@ const regexes = {
     },
 
     FOREIGN_KEY: {
-        REGEX: /(CONSTRAINT +([^ ]+))?([ ]{1,}FOREIGN {0,}KEY)[ ]{0,}\(([^\)]+)\)([ ]{0,}REFERENCES)[ ]{1,}([^ ]+)([ ]{0,}\(([^\)]+)\))?([ ]{1,}ON(([ ]{1,}(DELETE)[ ]{1,}(RESTRICT|CASCADE))?)?(([ ]{1,}(UPDATE)[ ]{1,}(RESTRICT|CASCADE))?)?)?/ig,
+        REGEX: /FOREIGN[ ]{1,}KEY[ ]{1,}([^ ]+)[ ]{0,}\(([^\)]+)\)[ ]{1,}REFERENCES[ ]{1,}(((\"([^\"]+)\")|\w+)\.)((\"([^\"]+)\")|\w+)([ ]{0,}\(([^\)]+)\))?([ ]{0,}ON[ ]{1,}(DELETE|UPDATE)[ ]{1,}(\w+))/ig,
         CAP_INDEX: {
-            CONSTR_NAME: 2,
-            COLUMNS: 4,
-            REF_TABLE: 6,
-            REF_COLUMNS: 7,
-            DELETE_ACT_TYPE: 13,
-            UPDATE_ACT_TYPE: 17,
+            CONSTR_NAME: 1,
+            COLUMNS: 2,
+            REF_TABLE_SCHEMA: 4,
+            REF_TABLE_NAME: 7,
+            REF_COLUMNS: 10,
+            
+            DELETE_ACT_TYPE: 14,
+            UPDATE_ACT_TYPE: 16,
         }
     },
 
@@ -87,7 +89,7 @@ function Table(initialData) {
     this.database = null;//new Database();
     this.columns = []; //[new Column()]
     this.indexes = []; //[new IndexContraint()]
-    this.foregnKeys = []; //[new ForegnKeyContraint()]
+    this.foreignKeys = []; //[new ForegnKeyContraint()]
 
     Object.deepExtend(this, initialData || {});
 
@@ -117,7 +119,8 @@ function ForeignKey(initialData) {
     this.name = "";
     this.columns = []; //[new ColumnReferenceSpec()]
     
-    this.targetTable  = "";
+    this.targetSchema  = "";
+    this.targetTable   = "";
     this.targetColumns= [];
     this.deleteActionType= "";
     this.updateActionType= "";
@@ -256,8 +259,9 @@ function parseForeignKeys(script){
         var foreignKey = new ForeignKey({
             name: match[captures.CONSTR_NAME], 
             columns: match[captures.COLUMNS].split(','), 
-            targetTable: match[captures.REF_TABLE],
-            targetColumns: match[captures.REF_COLUMNS].split(","),
+            targetSchema: match[captures.REF_TABLE_SCHEMA],
+            targetTable: match[captures.REF_TABLE_NAME],
+            targetColumns: (match[captures.REF_COLUMNS] || match[captures.COLUMNS]).split(","),
             deleteActionType: match[captures.DELETE_ACT_TYPE],
             updateActionType: match[captures.UPDATE_ACT_TYPE],
             mapReference: {}

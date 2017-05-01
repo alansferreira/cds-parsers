@@ -27,7 +27,8 @@
   "devDependencies": {
     "semver-sync": "1.2.2", 
     "browserify": "14.1.0", 
-    "bower": "1.8.0"
+    "bower": "1.8.0", 
+    "mocha": "3.3.0"
   }
 
 }
