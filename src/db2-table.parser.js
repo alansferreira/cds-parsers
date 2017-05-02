@@ -18,7 +18,7 @@ const regexes = {
         }
     },
     ALTER_TABLE_HEADER: {
-        REGEX: /(ALTER)[ ]{1,}TABLE[ ]{1,}(((\"([^\"]+)\")|\w+)\.)((\"([^\"]+)\")|\w+)[ ]{0,}/ig,
+        REGEX: /(ALTER)[ ]{1,}TABLE[ ]{1,}(((\"([^\"]+)\")|\w+)\.)?((\"([^\"]+)\")|\w+)[ ]{0,}/ig,
         CAP_INDEX: {
             COMMAND_TYPE: 1,
             SCHEMA_NAME: 4,
@@ -35,7 +35,7 @@ const regexes = {
     },
 
     FOREIGN_KEY: {
-        REGEX: /FOREIGN[ ]{1,}KEY[ ]{1,}([^ ]+)[ ]{0,}\(([^\)]+)\)[ ]{1,}REFERENCES[ ]{1,}(((\"([^\"]+)\")|\w+)\.)((\"([^\"]+)\")|\w+)([ ]{0,}\(([^\)]+)\))?([ ]{0,}ON[ ]{1,}(DELETE|UPDATE)[ ]{1,}(\w+))/ig,
+        REGEX: /FOREIGN[ ]{1,}KEY[ ]{1,}([^ ]+)[ ]{0,}\(([^\)]+)\)[ ]{1,}REFERENCES[ ]{1,}(((\"([^\"]+)\")|\w+)\.)?((\"([^\"]+)\")|\w+)([ ]{0,}\(([^\)]+)\))?([ ]{0,}ON[ ]{1,}(DELETE|UPDATE)[ ]{1,}(\w+))/ig,
         CAP_INDEX: {
             CONSTR_NAME: 1,
             COLUMNS: 2,
