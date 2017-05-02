@@ -8,7 +8,7 @@ const regexes = {
     DATABASE_START_POINT: /(((CREATE)|(ALTER)) {1,}(DATABASE)|(USE)) {1,}([a-zA-Z0-9]+)/igm,
 
     CREATE_TABLE_HEADER: {
-        REGEX: /(CREATE|ALTER)[ ]{1,}TABLE[ ]{1,}(((\"([^\"]+)\")|\w+)\.)((\"([^\"]+)\")|\w+)[ ]{0,}\(/ig,
+        REGEX: /(CREATE|ALTER)[ ]{1,}TABLE[ ]{1,}(((\"([^\"]+)\")|\w+)\.)?((\"([^\"]+)\")|\w+)[ ]{0,}\(/ig,
         CAP_INDEX: {
             COMMAND_TYPE: 1,
             SCHEMA_NAME: 3,
