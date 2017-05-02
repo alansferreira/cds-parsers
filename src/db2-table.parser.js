@@ -35,16 +35,16 @@ const regexes = {
     },
 
     FOREIGN_KEY: {
-        REGEX: /FOREIGN[ ]{1,}KEY[ ]{1,}([^ ]+)[ ]{0,}\(([^\)]+)\)[ ]{1,}REFERENCES[ ]{1,}(((\"([^\"]+)\")|\w+)\.)?((\"([^\"]+)\")|\w+)([ ]{0,}\(([^\)]+)\))?([ ]{0,}ON[ ]{1,}(DELETE|UPDATE)[ ]{1,}(\w+))/ig,
+        REGEX: /FOREIGN[ ]{1,}KEY[ ]{0,}\(([^\)]+)\)[ ]{1,}REFERENCES[ ]{1,}(((\"([^\"]+)\")|\w+)\.)?((\"([^\"]+)\")|\w+)([ ]{0,}\(([^\)]+)\))?([ ]{0,}ON[ ]{1,}(DELETE|UPDATE)[ ]{1,}((NO[ ]{1,}ACTION)?(SET[ ]{1,}NULL)?|\w+))/ig,
         CAP_INDEX: {
-            CONSTR_NAME: 1,
-            COLUMNS: 2,
-            REF_TABLE_SCHEMA: 4,
-            REF_TABLE_NAME: 7,
+            //CONSTR_NAME: 1,
+            COLUMNS: 1,
+            REF_TABLE_SCHEMA: 5,
+            REF_TABLE_NAME: 8,
             REF_COLUMNS: 10,
             
-            DELETE_ACT_TYPE: 14,
-            UPDATE_ACT_TYPE: 16,
+            DELETE_ACT_TYPE: 13,
+            UPDATE_ACT_TYPE: 15,
         }
     },
 
@@ -257,7 +257,7 @@ function parseForeignKeys(script){
 
     iterateRegex(expr, script, function (regexp, inputText, match) {
         var foreignKey = new ForeignKey({
-            name: match[captures.CONSTR_NAME], 
+            //name: match[captures.CONSTR_NAME], 
             columns: match[captures.COLUMNS].split(','), 
             targetSchema: match[captures.REF_TABLE_SCHEMA],
             targetTable: match[captures.REF_TABLE_NAME],
