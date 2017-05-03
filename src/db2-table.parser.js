@@ -57,13 +57,19 @@ const regexes = {
             DATA_TYPE: 5,
             PRECISION: 10,
             SCALE: 12,
-            //IS_IDENTITY: 18,
-            //IDENTITY_SEED: 15,
-            //IDENTITY_STEP: 16,
             //IS_NOT_NULL: 14,
             //IS_PRIMARY: 99,
-        }
+        }, 
+    }, 
+    IDENTITY: {
+        REGEX: /IDENTITY( +GENERATED +(BY +DEFAULT))?([ ]{0,}\(([ ]{0,}START +WITH +([0-9]+))?([ ]{0,}INCREMENT +BY +([0-9]+))?[^\)]+\))?/ig, 
+        CAP_INDEX: {
+            SEED: 5,
+            STEP: 7,
+        }, 
+        
     }
+
 };
 
 
@@ -221,6 +227,16 @@ function parseColumnScript(scriptColumns){
 
         // PARSE IDENTITY, NULLABLE... STUFF HERE!!
 
+        var mIdentity = regexes.IDENTITY.REGEX.exec(match[0]);
+        if(mIdentity){
+            currentColumn.isAutoIncrement = true;
+            currentColumn.increment = {
+                seed: mIdentity[regexes.IDENTITY.CAP_INDEX.SEED] || 0,
+                step: mIdentity[regexes.IDENTITY.CAP_INDEX.STEP] || 1
+            };
+        }else{
+            delete currentColumn.increment;
+        }
 
 
         columns.push(currentColumn);
