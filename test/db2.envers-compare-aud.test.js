@@ -7,34 +7,44 @@ var tables1 = [];
 var tables2 = [];
 var script;
 
+// script = fs.readFileSync('scripts/db2.compare.1.sql');
+// var tables1 = db2Parser.parseTable(new String(script));
+// tables1 = from(tables1).orderBy("$.name").toArray();
+
+// script = fs.readFileSync('scripts/db2.compare.2.sql');
+// var tables2 = db2Parser.parseTable(new String(script));
+// tables2 = from(tables2).orderBy("$.name").toArray();
+
+
 script = fs.readFileSync('scripts/db2.compare.1.sql');
 var tables1 = db2Parser.parseTable(new String(script));
 
-script = fs.readFileSync('scripts/db2.compare.2.sql');
-var tables2 = db2Parser.parseTable(new String(script));
-
-
-
-tables1 = from(tables1).orderBy("$.name").toArray();
+var tables2 = from(tables1).where('$.name.endsWith("_AUD")').orderBy("$.name").toArray();
+tables1 = from(tables1).where('!$.name.endsWith("_AUD")').orderBy("$.name").toArray();
 
 from(tables1).forEach(function(t1){
-    var t2 = from(tables2)
-    .where(function(t){
-        return t.name == t1.name;
-    })
-    .firstOrDefault();
+    var t2 = from(tables2).where(function(t){return t.name.startsWith(t1.name)}).firstOrDefault();
     
-    if(!t2){
-        console.warn(`Table '${t1.name}' does not audited!`);
-        return true;
-    }
+    if(t2) return true;
+    var str = `Table '${t1.schema}'.'${t1.name}' does not audited!\r\n`;
+    
+    fs.appendFileSync("./result.txt", str);
+    console.warn(str);
+
+});
+
+from(tables1).forEach(function(t1){
+    var t2 = from(tables2).where(function(t){return t.name.startsWith(t1.name)}).firstOrDefault();
+    
+    if(!t2) return true;
     
     var t2Columns = t2.columns; //from(t2.columns).where("',ID,REV,REVTYPE'.indexOf(','+$.name)==-1").orderBy("$.name").toArray();
 
     t1.columns = from(t1.columns).orderBy("$.name").toArray();
     t1.errors = [];
 
-    from(t1.columns).forEach(function(c1){
+    from(t1.columns).where("$.name.indexOf(' ')==-1").forEach(function(c1){
+
         var c2 = from(t2Columns).where(function(c2){return c2.name == c1.name;}).firstOrDefault();
         if(!c2) {
             t1.errors.push(`'${t2.name}' does not contains '${c1.src}';`);
