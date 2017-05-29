@@ -23,13 +23,13 @@
             "type": "node",
             "request": "launch",
             "name": "db2 compare",
-            "program": "${workspaceRoot}\\db2.test.compare.js"
+            "program": "${workspaceRoot}\\test\\db2.envers-compare-aud.test.js"
         },
         {
             "type": "node",
             "request": "launch",
             "name": "db2 test",
-            "program": "${workspaceRoot}\\db2.test.js"
+            "program": "${workspaceRoot}\test\\db2.test.js"
         },
         {
             "type": "node",
