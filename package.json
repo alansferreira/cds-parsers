@@ -3,12 +3,10 @@
   "version": "0.1.50-0",
   "versionedSources": "bower.json",
   "description": "Common Data Structures Parsers",
-  "main": "index.js",
-
+  "main": "./src/index.js",
   "scripts": {
     "semver-sync": "node_modules/.bin/semver-sync -b"
   },
-  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alansferreira/cds-parsers.git"
@@ -20,15 +18,25 @@
   },
   "homepage": "https://github.com/alansferreira/cds-parsers#readme",
   "dependencies": {
+    "linq": "3.0.8",
     "requirejs": "2.3.2",
-    "underscore": "1.8.3",
-    "linq": "3.0.8"
-  }, 
+    "underscore": "1.8.3"
+  },
   "devDependencies": {
-    "semver-sync": "1.2.2", 
-    "browserify": "14.1.0", 
-    "bower": "1.8.0", 
-    "mocha": "3.3.0"
+    "semver-sync": "1.2.2",
+    "browserify": "14.1.0",
+    "bower": "1.8.0",
+    "mocha": "3.3.0",
+    
+    "gulp": "3.9.1",
+    "gulp-run": "1.7.1",
+    "gulp-bump": "^2.7.0",
+    "gulp-rename": "1.2.2",
+    "gulp-cli": "1.3.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-uglify": "^3.0.0",
+    "gulp-clean-css": "3.2.0",
+    "babel-preset-es2015": "^6.24.1",
+    "gulp-babel": "^6.1.2"
   }
-
 }

@@ -1,328 +1,328 @@
-﻿/**
- * The MIT License (MIT) 
- * 
- * Copyright (c) 2016 Alan da Silva Ferreira 
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights 
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
- * copies of the Software, and to permit persons to whom the Software is 
- * furnished to do so, subject to the following conditions: 
- * 
- * The above copyright notice and this permission notice shall be included in all 
- * copies or substantial portions of the Software. 
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
- * SOFTWARE. 
- **/
-define('mssql.parser', ['linqjs'], function(linq){
-    var _parser = {};
-    _parser.models = {};
+﻿// /**
+//  * The MIT License (MIT) 
+//  * 
+//  * Copyright (c) 2016 Alan da Silva Ferreira 
+//  * 
+//  * Permission is hereby granted, free of charge, to any person obtaining a copy 
+//  * of this software and associated documentation files (the "Software"), to deal 
+//  * in the Software without restriction, including without limitation the rights 
+//  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
+//  * copies of the Software, and to permit persons to whom the Software is 
+//  * furnished to do so, subject to the following conditions: 
+//  * 
+//  * The above copyright notice and this permission notice shall be included in all 
+//  * copies or substantial portions of the Software. 
+//  * 
+//  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+//  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+//  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+//  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+//  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+//  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+//  * SOFTWARE. 
+//  **/
+// define('mssql.parser', ['linqjs'], function(linq){
+//     var _parser = {};
+//     _parser.models = {};
     
-    _parser.REGEXES = {
-        COMMENT: /(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/)|(\/\/.*)/g,
+//     _parser.REGEXES = {
+//         COMMENT: /(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/)|(\/\/.*)/g,
 
-        DATABASE_START_POINT: /(((CREATE)|(ALTER)) {1,}(DATABASE)|(USE)) {1,}([a-zA-Z0-9]+)/igm,
+//         DATABASE_START_POINT: /(((CREATE)|(ALTER)) {1,}(DATABASE)|(USE)) {1,}([a-zA-Z0-9]+)/igm,
 
-        CREATE_TABLE_HEADER: {
-            EXPRESSION: /(CREATE|ALTER) {1,}(TABLE) {1,}(((\[[^\]]+\]|[a-zA-Z0-9_]+)\.(\[[^\]]+\]|[a-zA-Z0-9_]+))|(\[[^\]]+\]|[a-zA-Z0-9_]+))[ ]{0,}\([ ]{0,}/igm,
-            CAPTURES_INDEXES: {
-                COMMAND_TYPE: 1,
-                SCHEMA_NAME: 5,
-                TABLE_NAME: 6,
-                TABLE_NAME_ALTERNATIVE: 7,
-            }
-        },
-        CONSTRAINT_INLINE: /CONSTRAINT[ ]{0,}(\[{0,}[^\[]+\]{0,})(.+(CLUSTERED)?)?[ ]{0,}\(([^\)]+)\)+/igm,
-        CONSTRAINT_PRIMARY_KEY_HEADER: {
-            EXPRESSION: /CONSTRAINT +\[?([^\]]+)\]? {0,}(PRIMARY +KEY)[^\(]+(\([^\)]+\))/img,
-            CAPTURES_INDEXES: {
-                CONSTRANTI_NAME: 1,
-                COLUMNS_SPEC: 3
-            },
-            FIELDS_DEF: {
-                EXPRESSION: / {0,},? {0,}\[?([^\)\(\]]+)\]? +(ASC|DESC)/ig,
-                CAPTURES_INDEXES: {
-                    FIELD_NAME: 1,
-                    SORT_TYPE: 2
-                }
-            }
-        },
+//         CREATE_TABLE_HEADER: {
+//             EXPRESSION: /(CREATE|ALTER) {1,}(TABLE) {1,}(((\[[^\]]+\]|[a-zA-Z0-9_]+)\.(\[[^\]]+\]|[a-zA-Z0-9_]+))|(\[[^\]]+\]|[a-zA-Z0-9_]+))[ ]{0,}\([ ]{0,}/igm,
+//             CAPTURES_INDEXES: {
+//                 COMMAND_TYPE: 1,
+//                 SCHEMA_NAME: 5,
+//                 TABLE_NAME: 6,
+//                 TABLE_NAME_ALTERNATIVE: 7,
+//             }
+//         },
+//         CONSTRAINT_INLINE: /CONSTRAINT[ ]{0,}(\[{0,}[^\[]+\]{0,})(.+(CLUSTERED)?)?[ ]{0,}\(([^\)]+)\)+/igm,
+//         CONSTRAINT_PRIMARY_KEY_HEADER: {
+//             EXPRESSION: /CONSTRAINT +\[?([^\]]+)\]? {0,}(PRIMARY +KEY)[^\(]+(\([^\)]+\))/img,
+//             CAPTURES_INDEXES: {
+//                 CONSTRANTI_NAME: 1,
+//                 COLUMNS_SPEC: 3
+//             },
+//             FIELDS_DEF: {
+//                 EXPRESSION: / {0,},? {0,}\[?([^\)\(\]]+)\]? +(ASC|DESC)/ig,
+//                 CAPTURES_INDEXES: {
+//                     FIELD_NAME: 1,
+//                     SORT_TYPE: 2
+//                 }
+//             }
+//         },
 
-        CONSTRAINT_FOREIGN_KEY_HEADER: {
-            EXPRESSION: /CONSTRAINT +\[?([^\]]+)\]? {0,}(FOREIGN {0,}KEY)[^\(]+\(/img,
-            CONSTRANTI_NAME: 1,
-        },
-        CONSTRAINT_FOREIGN_KEY_HEADER: {
-            EXPRESSION: /CONSTRAINT +\[?([^\]]+)\]? {0,}(FOREIGN {0,}KEY)[^\(]+\(/img,
-            CONSTRANTI_NAME: 1,
-        },
+//         CONSTRAINT_FOREIGN_KEY_HEADER: {
+//             EXPRESSION: /CONSTRAINT +\[?([^\]]+)\]? {0,}(FOREIGN {0,}KEY)[^\(]+\(/img,
+//             CONSTRANTI_NAME: 1,
+//         },
+//         CONSTRAINT_FOREIGN_KEY_HEADER: {
+//             EXPRESSION: /CONSTRAINT +\[?([^\]]+)\]? {0,}(FOREIGN {0,}KEY)[^\(]+\(/img,
+//             CONSTRANTI_NAME: 1,
+//         },
 
 
-        TABLE_COLUMN: {
-            EXPRESSION: /(\[[^\]]+\]|[a-zA-Z0-9_]+)[ ]+((\[[^\]]+\]|[a-zA-Z0-9_]+)([ ]{0,}\([ ]{0,}(([0-9]+)([ ]{0,},[ ]{0,}([0-9]))?)[ ]{0,}\))?)([ ]{1,}(NOT[ ]{1,})?NULL)?([ ]{1,}FOR[ ]{1,}[^ ]+[ ]{1,}DATA)?([ ]{1,}(WITH[ ]{1,}DEFAULT[ ]{1,})([^ ]+))?([ ]{1,}(.+IDENTITY([ ]{0,}\([^\)]+\))))?[ ]{0,}[,]{0,}[ ]{0,}([ ]{1,}(PRIMARY[ ]{1,}KEY([ ]{1,}ASC|[ ]{1,}DESC)))?/igm,
-            CAPTURES_INDEXES: {
-                NAME: 1,
-                DATA_TYPE: 3,
-                PRECISION: 6,
-                SCALE: 8,
-                IS_IDENTITY: 13,
-                IDENTITY_SEED: 15,
-                IDENTITY_STEP: 16,
-                IS_PRIMARY: 10,
-                IS_NOT_NULL: 18
-            }
-        }
-    };
+//         TABLE_COLUMN: {
+//             EXPRESSION: /(\[[^\]]+\]|[a-zA-Z0-9_]+)[ ]+((\[[^\]]+\]|[a-zA-Z0-9_]+)([ ]{0,}\([ ]{0,}(([0-9]+)([ ]{0,},[ ]{0,}([0-9]))?)[ ]{0,}\))?)([ ]{1,}(NOT[ ]{1,})?NULL)?([ ]{1,}FOR[ ]{1,}[^ ]+[ ]{1,}DATA)?([ ]{1,}(WITH[ ]{1,}DEFAULT[ ]{1,})([^ ]+))?([ ]{1,}(.+IDENTITY([ ]{0,}\([^\)]+\))))?[ ]{0,}[,]{0,}[ ]{0,}([ ]{1,}(PRIMARY[ ]{1,}KEY([ ]{1,}ASC|[ ]{1,}DESC)))?/igm,
+//             CAPTURES_INDEXES: {
+//                 NAME: 1,
+//                 DATA_TYPE: 3,
+//                 PRECISION: 6,
+//                 SCALE: 8,
+//                 IS_IDENTITY: 13,
+//                 IDENTITY_SEED: 15,
+//                 IDENTITY_STEP: 16,
+//                 IS_PRIMARY: 10,
+//                 IS_NOT_NULL: 18
+//             }
+//         }
+//     };
     
-    _parser.models.column = function (initialData) {
-        this.name = "";
-        this.isPrimary = false;
-        this.table = null; //new _parser.models.table();
-        this.type = "";
-        this.precision = 0;
-        this.scale = 0;
-        this.isNullable = true;
-        this.isAutoIncrement = false;
-        this.increment = { seed: 0, step: 1 };
+//     _parser.models.column = function (initialData) {
+//         this.name = "";
+//         this.isPrimary = false;
+//         this.table = null; //new _parser.models.table();
+//         this.type = "";
+//         this.precision = 0;
+//         this.scale = 0;
+//         this.isNullable = true;
+//         this.isAutoIncrement = false;
+//         this.increment = { seed: 0, step: 1 };
 
-        Object.deepExtend(this, initialData || {});
+//         Object.deepExtend(this, initialData || {});
 
-        this.name = clearSysname(this.name);
-    };
+//         this.name = clearSysname(this.name);
+//     };
 
-    _parser.models.table = function (initialData) {
-        this.name = "";
-        this.schema = "";
-        this.database = null;//new _parser.models.database();
-        this.columns = []; //[new _parser.models.column()]
-        this.indexes = []; //[new _parser.models.indexContraint()]
-        this.foregnKeys = []; //[new _parser.models.foregnKeyContraint()]
+//     _parser.models.table = function (initialData) {
+//         this.name = "";
+//         this.schema = "";
+//         this.database = null;//new _parser.models.database();
+//         this.columns = []; //[new _parser.models.column()]
+//         this.indexes = []; //[new _parser.models.indexContraint()]
+//         this.foregnKeys = []; //[new _parser.models.foregnKeyContraint()]
 
-        Object.deepExtend(this, initialData || {});
+//         Object.deepExtend(this, initialData || {});
 
-        this.name = clearSysname(this.name);
+//         this.name = clearSysname(this.name);
 
-    };
-    _parser.models.primaryKey = function (initialData) {
-        this.name = "";
-        this.colunms = []; //[new _parser.models.columnIndexSpec()]
-        Object.deepExtend(this, initialData || {});
+//     };
+//     _parser.models.primaryKey = function (initialData) {
+//         this.name = "";
+//         this.colunms = []; //[new _parser.models.columnIndexSpec()]
+//         Object.deepExtend(this, initialData || {});
 
-        this.name = clearSysname(this.name);
+//         this.name = clearSysname(this.name);
 
-    };
-    _parser.models.SORT = { ASC: "ASC", DESC: "DESC" };
-    _parser.models.columnIndexSpec = function (initialData) {
-        this.name = "";
-        this.sort = _parser.models.SORT.ASC;
+//     };
+//     _parser.models.SORT = { ASC: "ASC", DESC: "DESC" };
+//     _parser.models.columnIndexSpec = function (initialData) {
+//         this.name = "";
+//         this.sort = _parser.models.SORT.ASC;
 
-        Object.deepExtend(this, initialData || {});
+//         Object.deepExtend(this, initialData || {});
         
-        this.name = clearSysname(this.name);
-    };
+//         this.name = clearSysname(this.name);
+//     };
 
-    _parser.databaseScript = function (scriptData) {
+//     _parser.databaseScript = function (scriptData) {
 
-        iterateRegex(_parser.REGEXES.DATABASE_START_POINT, function (regexp, inputText, match) {
+//         iterateRegex(_parser.REGEXES.DATABASE_START_POINT, function (regexp, inputText, match) {
 
-        });
+//         });
 
-    };
-    _parser.columnScript = function (scriptColumns) {
+//     };
+//     _parser.columnScript = function (scriptColumns) {
 
-        var columns = [];
+//         var columns = [];
 
-        iterateRegex(_parser.REGEXES.TABLE_COLUMN.EXPRESSION, scriptColumns, function (regexp, inputText, match) {
-            var columnSpec = match[0];
-            var currentColumn = new _parser.models.column({
-                name: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.NAME],
-                type: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.DATA_TYPE],
-                precision: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.PRECISION],
-                scale: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.SCALE],
-                isPrimary: !!match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.IS_PRIMARY],
-                isAutoIncrement: !!match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.IS_IDENTITY],
-                increment: {
-                    seed: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.IDENTITY_SEED],
-                    step: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.IDENTITY_STEP]
-                },
-                isNullable: !!match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.IS_NOT_NULL],
+//         iterateRegex(_parser.REGEXES.TABLE_COLUMN.EXPRESSION, scriptColumns, function (regexp, inputText, match) {
+//             var columnSpec = match[0];
+//             var currentColumn = new _parser.models.column({
+//                 name: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.NAME],
+//                 type: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.DATA_TYPE],
+//                 precision: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.PRECISION],
+//                 scale: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.SCALE],
+//                 isPrimary: !!match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.IS_PRIMARY],
+//                 isAutoIncrement: !!match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.IS_IDENTITY],
+//                 increment: {
+//                     seed: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.IDENTITY_SEED],
+//                     step: match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.IDENTITY_STEP]
+//                 },
+//                 isNullable: !!match[_parser.REGEXES.TABLE_COLUMN.CAPTURES_INDEXES.IS_NOT_NULL],
 
-                src: columnSpec
-            });
-            columns.push(currentColumn);
+//                 src: columnSpec
+//             });
+//             columns.push(currentColumn);
 
-        });
+//         });
 
-        return columns;
-    };
+//         return columns;
+//     };
 
-    _parser.tableScript = function (scriptData) {
+//     _parser.tableScript = function (scriptData) {
         
-        //var tbRex = "(CREATE) {1,}(TABLE) {1,}(\[?[a-zA-Z0-9]+\](\[?[a-zA-Z0-9]+\])?)[^\(]+\([ ]{0,}" +
-        //                "([ ]{0,}((\[?[a-zA-Z0-9]+\]?) {1,}((\[?[a-zA-Z0-9]+\]?)) {0,}((\([0-9, ]+)\)){0,})[ ]{0,}((IDENTITY[ ]{0,}\([ ]{0,}[0-9]+[,]{0,}[ ]{0,}[0-9]+[ ]{0,}\))){0,}[ ]{0,}[ ]{0,}([NOT]+[ ]{0,}){0,}([NULL]+){0,}[ ]{0,}[,]{0,}[ ]{0,})+";
-        //                //"|(CONSTRAINT[ ]{0,}(\[{0,}[^\[]+\]{0,})(.+(CLUSTERED)?)?[ ]{0,}\(([^\)]+)\)+)" +
-        //                //colocar aqui as expressoes de constraints
-        //            //"\)";
+//         //var tbRex = "(CREATE) {1,}(TABLE) {1,}(\[?[a-zA-Z0-9]+\](\[?[a-zA-Z0-9]+\])?)[^\(]+\([ ]{0,}" +
+//         //                "([ ]{0,}((\[?[a-zA-Z0-9]+\]?) {1,}((\[?[a-zA-Z0-9]+\]?)) {0,}((\([0-9, ]+)\)){0,})[ ]{0,}((IDENTITY[ ]{0,}\([ ]{0,}[0-9]+[,]{0,}[ ]{0,}[0-9]+[ ]{0,}\))){0,}[ ]{0,}[ ]{0,}([NOT]+[ ]{0,}){0,}([NULL]+){0,}[ ]{0,}[,]{0,}[ ]{0,})+";
+//         //                //"|(CONSTRAINT[ ]{0,}(\[{0,}[^\[]+\]{0,})(.+(CLUSTERED)?)?[ ]{0,}\(([^\)]+)\)+)" +
+//         //                //colocar aqui as expressoes de constraints
+//         //            //"\)";
 
-        var tables = [];
-        var script = scriptData.toString();
-        var offset = 0;
-        var _REGEXES = _parser.REGEXES;
+//         var tables = [];
+//         var script = scriptData.toString();
+//         var offset = 0;
+//         var _REGEXES = _parser.REGEXES;
 
-        while (_REGEXES.COMMENT.test(script)) {
-            script = script.replace(_REGEXES.COMMENT, "");
-        }
+//         while (_REGEXES.COMMENT.test(script)) {
+//             script = script.replace(_REGEXES.COMMENT, "");
+//         }
 
-        script = script.replaceAll("\t", " ").replaceAll("\r", " ").replaceAll("\n", " ");
+//         script = script.replaceAll("\t", " ").replaceAll("\r", " ").replaceAll("\n", " ");
 
-        iterateRegex(_REGEXES.CREATE_TABLE_HEADER.EXPRESSION, script, function (regexp, inputText, match) {
-            var tableScript = script.substring(match.index, script.indexOfCloser(match.index + match[0].length, "(", ")") + 1);
-            var tableConstraints = [];
+//         iterateRegex(_REGEXES.CREATE_TABLE_HEADER.EXPRESSION, script, function (regexp, inputText, match) {
+//             var tableScript = script.substring(match.index, script.indexOfCloser(match.index + match[0].length, "(", ")") + 1);
+//             var tableConstraints = [];
 
-            var table = new _parser.models.table({
-                src: tableScript,
-                schema: match[_REGEXES.CREATE_TABLE_HEADER.CAPTURES_INDEXES.SCHEMA_NAME],
-                name: match[_REGEXES.CREATE_TABLE_HEADER.CAPTURES_INDEXES.TABLE_NAME] || match[_REGEXES.CREATE_TABLE_HEADER.CAPTURES_INDEXES.TABLE_NAME_ALTERNATIVE]
-            });
+//             var table = new _parser.models.table({
+//                 src: tableScript,
+//                 schema: match[_REGEXES.CREATE_TABLE_HEADER.CAPTURES_INDEXES.SCHEMA_NAME],
+//                 name: match[_REGEXES.CREATE_TABLE_HEADER.CAPTURES_INDEXES.TABLE_NAME] || match[_REGEXES.CREATE_TABLE_HEADER.CAPTURES_INDEXES.TABLE_NAME_ALTERNATIVE]
+//             });
 
-            tableScript = tableScript.substring(match[0].length);
+//             tableScript = tableScript.substring(match[0].length);
 
 
-            ////TABLE CONSTRAINTS
-            //iterateRegex(_REGEXES.CONSTRAINT_INLINE, tableScript, function (regexp, inputText, match) {
-            //    tableConstraints.push(match);
+//             ////TABLE CONSTRAINTS
+//             //iterateRegex(_REGEXES.CONSTRAINT_INLINE, tableScript, function (regexp, inputText, match) {
+//             //    tableConstraints.push(match);
 
-            //    tableScript = tableScript.substring(0, match.index) + tableScript.substring(match.index + match[0].length);
-            //});
+//             //    tableScript = tableScript.substring(0, match.index) + tableScript.substring(match.index + match[0].length);
+//             //});
             
-            table.primaryKey = new _parser.models.primaryKey();
-            tableScript.replaceAll(_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.EXPRESSION, function (primaryExpr, constraintName, type, columnsSpec) {
-                columnsSpec.replaceAll(_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.FIELDS_DEF.EXPRESSION, function (columnSpec, fieldName, sortType) {
+//             table.primaryKey = new _parser.models.primaryKey();
+//             tableScript.replaceAll(_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.EXPRESSION, function (primaryExpr, constraintName, type, columnsSpec) {
+//                 columnsSpec.replaceAll(_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.FIELDS_DEF.EXPRESSION, function (columnSpec, fieldName, sortType) {
 
-                    table.primaryKey.colunms.push(new _parser.models.columnIndexSpec({ name: fieldName, sort: sortType }));
+//                     table.primaryKey.colunms.push(new _parser.models.columnIndexSpec({ name: fieldName, sort: sortType }));
 
-                });
-            });
+//                 });
+//             });
 
-            ////iterateRegex(_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.EXPRESSION, tableScript, function (regexp, inputText, match) {
-            ////    //tableConstraints.push(match);
+//             ////iterateRegex(_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.EXPRESSION, tableScript, function (regexp, inputText, match) {
+//             ////    //tableConstraints.push(match);
 
-            ////    table.primaryKey = new _parser.models.primaryKey(); 
-            ////    iterateRegex(_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.FIELDS_DEF.EXPRESSION, match[_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.CAPTURES_INDEXES.COLUMNS_SPEC], function (regexp1, inputText1, match1) {
-            ////        table.primaryKey.colunms.push(new _parser.models.columnIndexSpec({
-            ////            name: match1[_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.FIELDS_DEF.CAPTURES_INDEXES.FIELD_NAME],
-            ////            sort: match1[_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.FIELDS_DEF.CAPTURES_INDEXES.SORT_TYPE]
-            ////        }));
+//             ////    table.primaryKey = new _parser.models.primaryKey(); 
+//             ////    iterateRegex(_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.FIELDS_DEF.EXPRESSION, match[_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.CAPTURES_INDEXES.COLUMNS_SPEC], function (regexp1, inputText1, match1) {
+//             ////        table.primaryKey.colunms.push(new _parser.models.columnIndexSpec({
+//             ////            name: match1[_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.FIELDS_DEF.CAPTURES_INDEXES.FIELD_NAME],
+//             ////            sort: match1[_REGEXES.CONSTRAINT_PRIMARY_KEY_HEADER.FIELDS_DEF.CAPTURES_INDEXES.SORT_TYPE]
+//             ////        }));
 
-            ////    });
-            ////    tableScript = tableScript.substring(0, match.index) + tableScript.substring(match.index + match[0].length);
-            ////});
+//             ////    });
+//             ////    tableScript = tableScript.substring(0, match.index) + tableScript.substring(match.index + match[0].length);
+//             ////});
 
-            ////TABLE COLUMNS
-            //iterateRegex(_REGEXES.COLUMN_SPECIFICATION, tableScript, function (regexp, inputText, match) {
-            //    table.columns.push(new _parser.columnScript(match[0]));
+//             ////TABLE COLUMNS
+//             //iterateRegex(_REGEXES.COLUMN_SPECIFICATION, tableScript, function (regexp, inputText, match) {
+//             //    table.columns.push(new _parser.columnScript(match[0]));
 
-            //    tableScript = tableScript.substring(0, match.index) + tableScript.substring(match.index + match[0].length);
-            //});
+//             //    tableScript = tableScript.substring(0, match.index) + tableScript.substring(match.index + match[0].length);
+//             //});
 
 
-            table.columns = _parser.columnScript(tableScript);
+//             table.columns = _parser.columnScript(tableScript);
 
-            linq.From(table.primaryKey.colunms).ForEach(function (pk) {
+//             linq.From(table.primaryKey.colunms).ForEach(function (pk) {
 
-                var column = linq.From(table.columns).Where(function (c) {
-                    return (c.name == pk.name);
-                }).FirstOrDefault();
-                if (!column) return true;
+//                 var column = linq.From(table.columns).Where(function (c) {
+//                     return (c.name == pk.name);
+//                 }).FirstOrDefault();
+//                 if (!column) return true;
 
-                column.isPrimary = true;
-            });
-            for (var c in table.columns) {
-                c.table = table;
-            }
+//                 column.isPrimary = true;
+//             });
+//             for (var c in table.columns) {
+//                 c.table = table;
+//             }
 
-            tables.push(table);
+//             tables.push(table);
 
-        });
+//         });
 
-        return tables;
-    };
+//         return tables;
+//     };
 
-    function iterateRegex(regexp, inputText, callback) {
-        var matches = [];
-        var match = regexp.exec(inputText);
-        while (match != null) {
+//     function iterateRegex(regexp, inputText, callback) {
+//         var matches = [];
+//         var match = regexp.exec(inputText);
+//         while (match != null) {
 
-            callback(regexp, inputText, match);
+//             callback(regexp, inputText, match);
 
-            matches.push(match);
-            match = regexp.exec(inputText);
-        }
+//             matches.push(match);
+//             match = regexp.exec(inputText);
+//         }
 
-    };
+//     };
 
-    function clearSysname(argName){
-        var sysname = argName;
+//     function clearSysname(argName){
+//         var sysname = argName;
 
-        if(sysname.startsWith('['))sysname = sysname.substring(1);
-        if(sysname.endsWith(']'))sysname = sysname.substring(0, sysname.length - 1);
+//         if(sysname.startsWith('['))sysname = sysname.substring(1);
+//         if(sysname.endsWith(']'))sysname = sysname.substring(0, sysname.length - 1);
         
-        return sysname;
-    }
+//         return sysname;
+//     }
 
-    return _parser;
+//     return _parser;
 
-});
+// });
 
-/// <summary>the @param start should be after from opener</summary>
-String.prototype.indexOfCloser = function findClosesOf(start, opener, closer) {
-    var countOpener = 1;
-    for (var i = start; i < this.length; i++) {
-        if (this[i] == opener) { countOpener++; continue; }
-        if (this[i] == closer) {
-            countOpener--;
-            if (countOpener == 0) {
-                return i;
-            }
-            continue;
-        }
+// /// <summary>the @param start should be after from opener</summary>
+// String.prototype.indexOfCloser = function findClosesOf(start, opener, closer) {
+//     var countOpener = 1;
+//     for (var i = start; i < this.length; i++) {
+//         if (this[i] == opener) { countOpener++; continue; }
+//         if (this[i] == closer) {
+//             countOpener--;
+//             if (countOpener == 0) {
+//                 return i;
+//             }
+//             continue;
+//         }
 
-    }
-};
+//     }
+// };
 
-Object.deepExtend = function (destination, source) {
-    for (var property in source) {
-        if (source[property] && source[property].constructor &&
-         source[property].constructor === Object) {
-            destination[property] = destination[property] || {};
-            arguments.callee(destination[property], source[property]);
-        } else {
-            destination[property] = source[property];
-        }
-    } 
-    return destination;
-};
+// Object.deepExtend = function (destination, source) {
+//     for (var property in source) {
+//         if (source[property] && source[property].constructor &&
+//          source[property].constructor === Object) {
+//             destination[property] = destination[property] || {};
+//             arguments.callee(destination[property], source[property]);
+//         } else {
+//             destination[property] = source[property];
+//         }
+//     } 
+//     return destination;
+// };
 
-String.prototype.replaceAll = function (search, replacement) {
-    var ret = this.toString().replace(search, replacement);
+// String.prototype.replaceAll = function (search, replacement) {
+//     var ret = this.toString().replace(search, replacement);
      
-    while (ret.indexOf(search)!=-1) {
-        ret = ret.replace(search, replacement);
-    }
-    return ret;
+//     while (ret.indexOf(search)!=-1) {
+//         ret = ret.replace(search, replacement);
+//     }
+//     return ret;
 
-};
+// };
 
-String.prototype.trim = function () {
-    return this.replace(/^\s+|\s+$/gm, '');
-};
-String.isNullOrWhiteSpace = function (value) {
-    return value == null || value.toString().trim()=="";
-};
+// String.prototype.trim = function () {
+//     return this.replace(/^\s+|\s+$/gm, '');
+// };
+// String.isNullOrWhiteSpace = function (value) {
+//     return value == null || value.toString().trim()=="";
+// };
