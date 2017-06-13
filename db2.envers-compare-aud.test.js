@@ -1,6 +1,6 @@
 var {from} = require('linq');
 
-var db2Parser = require('../src/db2-table.parser');
+var db2Parser = require('./src/db2-table.parser');
 var fs = require('fs');
 
 var tables1 = [];
@@ -16,7 +16,7 @@ var script;
 // tables2 = from(tables2).orderBy("$.name").toArray();
 
 
-script = fs.readFileSync('scripts/db2.compare.1.sql');
+script = fs.readFileSync('./scripts/db2.compare.1.sql');
 var tables1 = db2Parser.parseTable(new String(script));
 
 var tables2 = from(tables1).where('$.name.endsWith("_AUD")').orderBy("$.name").toArray();

@@ -24,7 +24,7 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceRoot}/test/db2.read-script.test.js"
+                "${workspaceRoot}/test/mocha.js"
             ],
             "internalConsoleOptions": "openOnSessionStart"
         },
