@@ -24,7 +24,7 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceRoot}/test/mocha.js"
+                "${workspaceRoot}/test/*.spec.js"
             ],
             "internalConsoleOptions": "openOnSessionStart"
         },

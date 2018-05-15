@@ -9,7 +9,7 @@ describe('Read and parse table scripts', function(){
         
         var tables = cdsParser.DB2.parseTable(script);
         
-        assert(tables.length==13);
+        assert(tables.length==13, 'error');
     });
 
 
@@ -17,7 +17,7 @@ describe('Read and parse table scripts', function(){
         var script = new String(fs.readFileSync('./test/mssql.full-script.sql'));
         
         var tables = cdsParser.MSSQL.parseTable(script);
-        assert(tables.length==4);
+        assert(tables.length==4, 'error');
     });
 
 });

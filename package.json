@@ -1,6 +1,6 @@
 {
   "name": "cds-parsers",
-  "version": "0.1.50-0",
+  "version": "0.1.52-0",
   "versionedSources": "bower.json",
   "description": "Common Data Structures Parsers",
   "main": "./src/index.js",
@@ -27,7 +27,6 @@
     "browserify": "14.1.0",
     "bower": "1.8.0",
     "mocha": "3.3.0",
-    
     "gulp": "3.9.1",
     "gulp-run": "1.7.1",
     "gulp-bump": "^2.7.0",

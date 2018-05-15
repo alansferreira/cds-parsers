@@ -210,6 +210,8 @@
         script = clearCommentsAndLines(script);
         
         iterateRegex(regexes.TABLE_COLUMN.REGEX, script, function (regexp, inputText, match) {
+            if( regexes.FOREIGN_KEY.REGEX.test(match.input)) return true;
+
             var columnSpec = match[0];
             var currentColumn = new Column({
                 name: match[regexes.TABLE_COLUMN.CAP_INDEX.NAME_WRAPPED] || match[regexes.TABLE_COLUMN.CAP_INDEX.NAME],
