@@ -408,4 +408,4 @@
     return mssql_module;
 };
 
-(module || {}).exports = initializeMSSQLModule();  
+(this.module || {}).exports = initializeMSSQLModule();  

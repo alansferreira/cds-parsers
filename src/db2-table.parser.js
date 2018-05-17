@@ -403,4 +403,4 @@
    return db2_module;
 };
 
-(module || {}).exports = initializeDB2Module();  
+(this.module || {}).exports = initializeDB2Module();  
