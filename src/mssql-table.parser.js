@@ -1,8 +1,4 @@
-﻿var mssql_module;
-
-(function(){
-
-    var {from} = require ? require('linq') : Enumerable;
+﻿function initializeMSSQLModule () {
 
     const sortModel = { ASC: "ASC", DESC: "DESC" };
     const regexes = {
@@ -166,7 +162,7 @@
             var tableSchema = match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.SCHEMA_NAME] || match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.SCHEMA_NAME_WRAPPED];
             var tableName = match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.TABLE_NAME] || match[regexes.CREATE_TABLE_HEADER.CAP_INDEX.TABLE_NAME_WRAPPED];
             
-            var table = from(tables).where(function(t){return t.name == tableName && t.schema == tableSchema; }).firstOrDefault();
+            var table = tables.filter((t) => {return t.name == tableName && t.schema == tableSchema; })[0];
             
             if(!table){
                 table = new Table({
@@ -189,8 +185,8 @@
 
             table.primaryKey = parsePrimaryKey(tableScript);
 
-            from(table.primaryKey.columns).forEach(function(pkc){
-                var c = from(table.columns).where(function(c){return c.name==pkc.name;}).firstOrDefault();
+            table.primaryKey.columns.map((pkc) => {
+                var c = table.columns.filter((c) => {return c.name==pkc.name;})[0];
                 if(!c) return true;
                 c.isPrimary = true;
             });        
@@ -392,7 +388,7 @@
     //     return value == null || value.toString().trim() == "";
     // };
 
-    mssql_module = {
+    var mssql_module = {
         parseTable: parseTableScript, 
         parseColumn: parseColumnScript, 
         Table: Table, 
@@ -410,4 +406,6 @@
     } 
 
     return mssql_module;
-})();
+};
+
+(module || {}).exports = initializeMSSQLModule();  
