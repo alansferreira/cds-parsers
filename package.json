@@ -1,6 +1,6 @@
 {
   "name": "cds-parsers",
-  "version": "0.1.52-0",
+  "version": "0.1.53-0",
   "versionedSources": "bower.json",
   "description": "Common Data Structures Parsers",
   "main": "./src/index.js",

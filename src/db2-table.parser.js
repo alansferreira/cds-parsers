@@ -1,6 +1,7 @@
-﻿(function(){
+﻿var db2_module;
 
-    var {from} = require('linq');
+(function(){
+    var {from} = require ? require('linq') : Enumerable;
 
     const sortModel = { ASC: "ASC", DESC: "DESC" };
     const regexes = {
@@ -327,9 +328,9 @@
 
     };
     function clearCommentsAndLines(content){
-        var contentAux = content.replaceAll(regexes.SINGLE_COMMENT, "");
+        var contentAux = content.replace(regexes.SINGLE_COMMENT, "");
         
-        contentAux = contentAux.replaceAll("\t", " ").replaceAll("\r", " ").replaceAll("\n", " ");
+        contentAux = contentAux.replace(/\t/g, " ").replace(/\r/g, " ").replace(/\n/g, " ");
 
         while (regexes.FULL_COMMENT.test(contentAux)) {
             contentAux = contentAux.replace(regexes.FULL_COMMENT, "");
@@ -375,24 +376,24 @@
         return destination;
     };
 
-    String.prototype.replaceAll = function (search, replacement) {
-        var ret = this.toString().replace(search, replacement);
+    // String.prototype.replaceAll = function (search, replacement) {
+    //     var ret = this.toString().replace(search, replacement);
 
-        while (ret.indexOf(search) != -1) {
-            ret = ret.replace(search, replacement);
-        }
-        return ret;
+    //     while (ret.indexOf(search) != -1) {
+    //         ret = ret.replace(search, replacement);
+    //     }
+    //     return ret;
 
-    };
+    // };
 
-    String.prototype.trim = function () {
-        return this.replace(/^\s+|\s+$/gm, '');
-    };
-    String.isNullOrWhiteSpace = function (value) {
-        return value == null || value.toString().trim() == "";
-    };
+    // String.prototype.trim = function () {
+    //     return this.replace(/^\s+|\s+$/gm, '');
+    // };
+    // String.isNullOrWhiteSpace = function (value) {
+    //     return value == null || value.toString().replace(/^\s+|\s+$/gm, '') == "";
+    // };
 
-    var db2_module = {
+    db2_module = {
         parseTable: parseTableScript, 
         parseColumn: parseColumnScript, 
         Table: Table, 
@@ -402,7 +403,12 @@
         ForeignKey: ForeignKey
         
     };
+    
+    try {
+        module.exports = db2_module;  
+    } catch (error) {
+        
+    } 
 
-    module.exports = db2_module;
     return db2_module;
 })();
