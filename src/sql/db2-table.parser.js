@@ -372,23 +372,6 @@
         return destination;
     };
 
-    // String.prototype.replaceAll = function (search, replacement) {
-    //     var ret = this.toString().replace(search, replacement);
-
-    //     while (ret.indexOf(search) != -1) {
-    //         ret = ret.replace(search, replacement);
-    //     }
-    //     return ret;
-
-    // };
-
-    // String.prototype.trim = function () {
-    //     return this.replace(/^\s+|\s+$/gm, '');
-    // };
-    // String.isNullOrWhiteSpace = function (value) {
-    //     return value == null || value.toString().replace(/^\s+|\s+$/gm, '') == "";
-    // };
-
     var db2_module = {
         parseTable: parseTableScript, 
         parseColumn: parseColumnScript, 
@@ -402,5 +385,4 @@
     
    return db2_module;
 };
-
-(this.module || {}).exports = initializeDB2Module();  
+module.exports = initializeDB2Module();
