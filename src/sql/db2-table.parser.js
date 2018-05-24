@@ -385,4 +385,7 @@
     
    return db2_module;
 };
-module.exports = initializeDB2Module();
+
+if(typeof module !== "undefined") {
+    module.exports = initializeDB2Module();
+}

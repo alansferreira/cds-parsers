@@ -399,13 +399,9 @@
         
     };
 
-    try {
-        module.exports = mssql_module;  
-    } catch (error) {
-        
-    } 
-
     return mssql_module;
 };
 
-module.exports = initializeMSSQLModule();
+if(typeof module !== "undefined") {
+    module.exports = initializeMSSQLModule();
+}
