@@ -297,8 +297,6 @@ function initializeCOBOLCopybookParser(){
         
     }
 
-
-
     var cobol_copybook = {
         loadBook: parseBook, 
     };
@@ -306,6 +304,8 @@ function initializeCOBOLCopybookParser(){
    return cobol_copybook;
 };
 
-module.exports = initializeCOBOLCopybookParser();
+if(typeof module !== "undefined") {
+    module.exports = initializeCOBOLCopybookParser();
+}
 
 
