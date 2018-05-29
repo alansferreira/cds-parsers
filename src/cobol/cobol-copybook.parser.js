@@ -373,7 +373,6 @@ function initializeCOBOLCopybookParser(){
     
         return [].concat.apply([], expandedItems);
     }
-    var expandedBook = expandBook(copyBook);
     
     var cobol_copybook = {
         loadBook: parseBook, 
