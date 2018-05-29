@@ -8,6 +8,10 @@ describe('Read and parse table scripts', function(){
         
         var book = cdsParser.COBOL.COPYBOOK.loadBook(script);
         
+        console.log(book);
+        fs.writeFileSync('./parsed-book.json', JSON.stringify(book, null, 2));
+        
+        
         assert(book.length==49, 'error');
     });
 

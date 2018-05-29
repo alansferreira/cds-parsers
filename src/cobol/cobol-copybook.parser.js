@@ -280,25 +280,104 @@ function initializeCOBOLCopybookParser(){
                     }
                 }
                 
+                if(rootFields.length == 0){
+                    book.push(newField)
+                }else {
+                    currentParent = rootFields[rootFields.length - 1];
+                    currentParent.fields.push(newField);
+                }
             }
 
-            if(rootFields.length == 0){
-                book.push(newField)
-            }else {
-                currentParent = rootFields[rootFields.length - 1];
-                currentParent.fields.push(newField);
-            }
 
             lastField = newField;
 
         }
-        console.log(book);
+
         return book;
         
     }
 
+
+    function getOccursLength(item){
+        var occurs = {
+            max: parseInt((item.occurs_max | 0)),
+            min: parseInt((item.occurs_min | 0))
+        };
+        return (occurs.max - occurs.min | 1);
+    }
+    /**
+     * Create expanded containers do types PICX, PIC9, PICS9, PIC+9
+     * @param {*} item 
+     */
+    function expandPrimitiveItem(item){
+        const expanded = [];
+        if(!item) return expanded;
+    
+        const occurs = getOccursLength(item);
+        for (let i = 0; i < occurs; i++) {
+            expanded.push({
+                name: item.name,
+                size: item.size,
+                type: item.type,
+                compression_logicalLevel: item.compression_logicalLevel,
+                has_compression: item.has_compression,
+                dataContent: '',
+                index: i,
+            });
+        }
+        return expanded;
+    
+    }
+    function expandPicx(item){ return expandPrimitiveItem(item); }
+    function expandPic9(item){ return expandPrimitiveItem(item); }
+    function expandPics9(item){ return expandPrimitiveItem(item); }
+    function expandPic_plus_9(item){ return expandPrimitiveItem(item); }
+    
+    function expandGroup_item(item){ 
+        const expanded = [];
+        if(!item) return expanded;
+    
+        var expandedRoot = {...item};
+        expandedRoot.dataFields = [].concat.apply([], item.fields.map((field) => {
+            return expandMapDelegates[field.type](field);
+        }));
+        delete expandedRoot.fields;
+    
+        const occurs = getOccursLength(item);
+        for (let i = 0; i < occurs; i++) {
+            expanded.push({
+                ...expandedRoot,
+    
+                index: i,
+            });
+        }
+        return expanded;
+    }
+    function expandRedefines(item){ return []; }
+    function expandCopy(item){ return []; }
+    
+    var expandMapDelegates = {
+        'GROUP_ITEM': expandGroup_item, 
+        'PICX': expandPicx, 
+        'PIC9': expandPic9, 
+        'PICS9': expandPics9, 
+        'PIC_PLUS_9': expandPic_plus_9, 
+        'REDEFINES': expandRedefines, 
+        'COPY': expandCopy, 
+    }
+    
+    function expandBook(book){
+        var expandedItems = book.map((item) => {
+            return expandMapDelegates[item.type](item);
+        });
+    
+        return [].concat.apply([], expandedItems);
+    }
+    var expandedBook = expandBook(copyBook);
+    
     var cobol_copybook = {
         loadBook: parseBook, 
+        expandDataBook: expandBook
     };
     
    return cobol_copybook;
