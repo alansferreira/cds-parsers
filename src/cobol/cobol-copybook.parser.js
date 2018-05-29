@@ -226,7 +226,7 @@ function initializeCOBOLCopybookParser(){
         var rootFields = [];
 
         for (let l = 0; l < lines.length; l++) {
-            const line = '' + lines[l].replace(/~+$/, ''); //rtrim
+            const line = '' + lines[l].replace(/ +$/gs, ''); //rtrim
             if(line.length < 7) continue;
             if(line.substr(6, 1) != ' ') continue;
 
