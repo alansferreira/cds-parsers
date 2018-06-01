@@ -121,9 +121,11 @@ function initializeCOBOLCopybookParser(){
         var  m;
         if((m = stmType.REGEX.exec(statement)) == null) return ;
 
+        var fieldObject;
+
         switch (stmType.FIELD_TYPE) {
             case regexes.GROUP_ITEM.FIELD_TYPE:
-                return {
+                fieldObject = {
                     src: statement,
                     type: regexes.GROUP_ITEM.FIELD_TYPE,
                     logicalLevel: m[regexes.GROUP_ITEM.CAP_INDEX.LEVEL],
@@ -133,8 +135,9 @@ function initializeCOBOLCopybookParser(){
                     depending_on: m[regexes.GROUP_ITEM.CAP_INDEX.DEPENDING_ON],
                     fields: [],
                 };
+                break;
             case regexes.PIC9.FIELD_TYPE:
-                return {
+                fieldObject = {
                     src: statement,
                     type: regexes.PIC9.FIELD_TYPE,
                     logicalLevel: m[regexes.PIC9.CAP_INDEX.LEVEL],
@@ -142,15 +145,16 @@ function initializeCOBOLCopybookParser(){
                     size: m[regexes.PIC9.CAP_INDEX.SIZE],
                     decimals: m[regexes.PIC9.CAP_INDEX.DECIMALS],
                     has_compression: m[regexes.PIC9.CAP_INDEX.HAS_COMPRESSION],
-                    compression_logicalLevel: m[regexes.PIC9.CAP_INDEX.COMPRESSION_LEVEL],
+                    compression_level: m[regexes.PIC9.CAP_INDEX.COMPRESSION_LEVEL],
                     default_value: (m[regexes.PIC9.CAP_INDEX.DEFAULT_VALUE] || '').replace(/[\'\"]/g, ''),
                     occurs_min: m[regexes.PIC9.CAP_INDEX.OCCURS_MIN],
                     occurs_max: m[regexes.PIC9.CAP_INDEX.OCCURS_MAX],
                     depending_on: m[regexes.PIC9.CAP_INDEX.DEPENDING_ON],
                         
                 };
+                break;
             case regexes.PIC_PLUS_9.FIELD_TYPE:
-                return {
+                fieldObject = {
                     src: statement,
                     type: regexes.PIC_PLUS_9.FIELD_TYPE,
                     logicalLevel: m[regexes.PIC_PLUS_9.CAP_INDEX.LEVEL],
@@ -158,15 +162,16 @@ function initializeCOBOLCopybookParser(){
                     size: m[regexes.PIC_PLUS_9.CAP_INDEX.SIZE],
                     decimals: m[regexes.PIC_PLUS_9.CAP_INDEX.DECIMALS],
                     has_compression: m[regexes.PIC_PLUS_9.CAP_INDEX.HAS_COMPRESSION],
-                    compression_logicalLevel: m[regexes.PIC_PLUS_9.CAP_INDEX.COMPRESSION_LEVEL],
+                    compression_level: m[regexes.PIC_PLUS_9.CAP_INDEX.COMPRESSION_LEVEL],
                     default_value: (m[regexes.PIC_PLUS_9.CAP_INDEX.DEFAULT_VALUE] || '').replace(/[\'\"]/g, ''),
                     occurs_min: m[regexes.PIC_PLUS_9.CAP_INDEX.OCCURS_MIN],
                     occurs_max: m[regexes.PIC_PLUS_9.CAP_INDEX.OCCURS_MAX],
                     depending_on: m[regexes.PIC_PLUS_9.CAP_INDEX.DEPENDING_ON],
                         
                 };
+                break;
             case regexes.PICS9.FIELD_TYPE:
-                return {
+                fieldObject = {
                     src: statement,
                     type: regexes.PICS9.FIELD_TYPE,
                     logicalLevel: m[regexes.PICS9.CAP_INDEX.LEVEL],
@@ -174,15 +179,16 @@ function initializeCOBOLCopybookParser(){
                     size: m[regexes.PICS9.CAP_INDEX.SIZE],
                     decimals: m[regexes.PICS9.CAP_INDEX.DECIMALS],
                     has_compression: m[regexes.PICS9.CAP_INDEX.HAS_COMPRESSION],
-                    compression_logicalLevel: m[regexes.PICS9.CAP_INDEX.COMPRESSION_LEVEL],
+                    compression_level: m[regexes.PICS9.CAP_INDEX.COMPRESSION_LEVEL],
                     default_value: (m[regexes.PICS9.CAP_INDEX.DEFAULT_VALUE] || '').replace(/[\'\"]/g, ''),
                     occurs_min: m[regexes.PICS9.CAP_INDEX.OCCURS_MIN],
                     occurs_max: m[regexes.PICS9.CAP_INDEX.OCCURS_MAX],
                     depending_on: m[regexes.PICS9.CAP_INDEX.DEPENDING_ON],
 
                 };
+                break;
             case regexes.PICX.FIELD_TYPE:
-                return {
+                fieldObject = {
                     src: statement,
                     type: regexes.PICX.FIELD_TYPE,
                     logicalLevel: m[regexes.PICX.CAP_INDEX.LEVEL],
@@ -193,8 +199,9 @@ function initializeCOBOLCopybookParser(){
                     occurs_max: m[regexes.PICX.CAP_INDEX.OCCURS_MAX],
                     depending_on: m[regexes.PICX.CAP_INDEX.DEPENDING_ON],
                 };
+                break;
             case regexes.REDEFINES.FIELD_TYPE:
-                return {
+                fieldObject = {
                     src: statement,
                     type: regexes.REDEFINES.FIELD_TYPE,
                     logicalLevel: m[regexes.REDEFINES.CAP_INDEX.LEVEL],
@@ -202,8 +209,9 @@ function initializeCOBOLCopybookParser(){
                     outer_name: m[regexes.REDEFINES.CAP_INDEX.OUTER_NAME],
                     fields: []
                 };
+                break;
             case regexes.IMPORT_COPY.FIELD_TYPE:
-                return {
+                fieldObject = {
                     src: statement,
                     type: regexes.IMPORT_COPY.FIELD_TYPE,
                     fileName: m[regexes.IMPORT_COPY.CAP_INDEX.FILE_NAME],
@@ -213,50 +221,68 @@ function initializeCOBOLCopybookParser(){
                 break;
         }
 
+        if(!fieldObject) return fieldObject;
+
+
+        try { fieldObject.logicalLevel = parseInt(fieldObject.logicalLevel); } catch(e) {} 
+        try { fieldObject.size = parseInt(fieldObject.size); } catch(e) {} 
+        try { fieldObject.has_compression = parseInt(fieldObject.has_compression); } catch(e) {} 
+        try { fieldObject.compression_level = parseInt(fieldObject.compression_level); } catch(e) {} 
+        try { fieldObject.default_value = parseInt(fieldObject.default_value); } catch(e) {} 
+        try { fieldObject.occurs_min = parseInt(fieldObject.occurs_min); } catch(e) {} 
+        try { fieldObject.occurs_max = parseInt(fieldObject.occurs_max); } catch(e) {} 
+
+        return fieldObject;
+
     }
 
-
-    function parseBook(content, importCopyCallback){
+    function* getStatemantIterator(content){
         const lines = content.replace(/\r\n/g,'\n').replace(/\n\n/g,'\n').split('\n');
-        const statements = [];
         var statement = '';
-        var book = [];
-        var lastField;
-        var currentParent;
-        var rootFields = [];
-
         for (let l = 0; l < lines.length; l++) {
-            const line = '' + lines[l].replace(/ +$/gs, ''); //rtrim
+            const line = '' + lines[l].replace(/ +$/g, ''); //rtrim
             if(line.length < 7) continue;
             if(line.substr(6, 1) != ' ') continue;
 
             statement += line.substring(7);
             if(!line.endsWith('.')) continue;
 
-            var newField = parseStatemant(statement);
-            
-            if(!newField) {
-                statement = '';
-                continue;
-            }
-            
+            yield statement;
+            statement = '';
+        }
+    }
+
+    function parseBook(content, importCopyCallback){
+        var sttIterator = getStatemantIterator(content);
+        var statement = {done: false};
+        var statements = [];
+
+        var book = [];
+        var lastField;
+        var currentParent;
+        var rootFields = [];
+
+        while( statement.done == false ){
+            statement = sttIterator.next();
+            if(statement.value === undefined) continue;
+
+            var newField = parseStatemant(statement.value);
+            if(!newField ) continue;
             if(newField.type == regexes.IMPORT_COPY.FIELD_TYPE){
                 // if(importCopyCallback){
                 //     importCopyCallback(newField.fileName, lastField);
                 // }
-                statement = '';
                 continue;
             }
-
+            
             statements.push(newField);
-            statement = '';
 
             if(!lastField){
                 book.push(newField)
                 lastField = newField
                 continue;
             }
-
+            
             if(newField.logicalLevel > lastField.logicalLevel && newField.logicalLevel < 50){
                 rootFields.push(lastField);
                 currentParent = rootFields[rootFields.length-1];
@@ -273,7 +299,13 @@ function initializeCOBOLCopybookParser(){
                     }
                 }
 
-                if(newField.logicalLevel == 77 || newField.logicalLevel < lastField.logicalLevel){
+
+                if(newField.logicalLevel == 77){
+                    // come back to root level
+                    rootFields.splice(0, rootFields.length);
+                    currentParent = null;
+                } else if(newField.logicalLevel < lastField.logicalLevel){
+                    // come back to brother level
                     while(rootFields.length != 0){
                         if(rootFields[rootFields.length - 1].logicalLevel < newField.logicalLevel) break;
                         rootFields.splice(rootFields.length - 1, 1);
@@ -290,12 +322,12 @@ function initializeCOBOLCopybookParser(){
 
 
             lastField = newField;
-
         }
-
-        return book;
         
+        return book;
     }
+
+
 
 
     function getOccursLength(item){
@@ -319,7 +351,7 @@ function initializeCOBOLCopybookParser(){
                 name: item.name,
                 size: item.size,
                 type: item.type,
-                compression_logicalLevel: item.compression_logicalLevel,
+                compression_level: item.compression_level,
                 has_compression: item.has_compression,
                 dataContent: '',
                 index: i,
@@ -375,6 +407,7 @@ function initializeCOBOLCopybookParser(){
     }
     
     var cobol_copybook = {
+        getStatemantIterator: getStatemantIterator,
         loadBook: parseBook, 
         expandDataBook: expandBook
     };
