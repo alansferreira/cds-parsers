@@ -24,17 +24,17 @@ describe('Read and parse program definitions', function(){
         assert(countStatements === countStatementsWithDot, 'error');
     });
     
-    // it('should parse cobol program', function(){
-    //     var script = new String(fs.readFileSync('./src/cobol/CCP0001.CBL'));
+    it('should parse cobol program', function(){
+        var script = new String(fs.readFileSync('./src/cobol/CCP0001.CBL'));
         
-    //     var book = cpyParser.loadBook(script);
+        var book = programParser.parseProgram(script);
         
-    //     console.log(book);
-    //     fs.writeFileSync('./parsed-book.CCP0001.CPY.json', JSON.stringify(book, null, 2));
+        console.log(book);
+        fs.writeFileSync('./parsed-program.CCP0001.CBL.json', JSON.stringify(book, null, 2));
         
         
-    //     assert(book.length==83, 'error');
-    // });
+        assert(book.length==83, 'error');
+    });
 
 
 
@@ -51,12 +51,12 @@ describe('Read and parse program definitions', function(){
     // });
 
     // it('should parse cobol program', function(){
-    //     var script = new String(fs.readFileSync('./src/cobol/CCP0001.CPY'));
+    //     var script = new String(fs.readFileSync('./src/cobol/CCP0001.CBL'));
         
     //     var book = cdsParser.COBOL.program.loadBook(script);
         
     //     console.log(book);
-    //     fs.writeFileSync('./parsed-book.CCP0001.CPY.json', JSON.stringify(book, null, 2));
+    //     fs.writeFileSync('./parsed-book.CCP0001.CBL.json', JSON.stringify(book, null, 2));
         
         
     //     assert(book.length==49, 'error');
