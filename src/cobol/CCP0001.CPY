@@ -12,7 +12,7 @@
            COPY 'I#FRWKGE'.
            05  WRK-BLOCO-INFO-ERRO     VALUE SPACES.
                10  WRK-CHAR-INFO-ERRO  PIC X(001)          OCCURS 0
-                                       TO 30000 TIMES
+                                       TO 100 TIMES
                                        DEPENDING ON FRWKGHEA-TAM-DADOS.
       *
       *----------------------------------------------------------------*
