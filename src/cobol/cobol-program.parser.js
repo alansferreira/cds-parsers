@@ -265,12 +265,12 @@ function initializeCOBOLProgramParser(){
             
 
             if(parsedStatements[0].STMT_TYPE==regexMap.DIVISION.STMT_TYPE){
-                currentDivision = { ...parsedStatements[0], sections: [] };
+                currentDivision = Object.assign({ sections: [] }, parsedStatements[0]);
                 program.divisions.push(currentDivision);
                 continue;
             }
             if(parsedStatements[0].STMT_TYPE==regexMap.SECTION.STMT_TYPE){
-                currentSection = { ...parsedStatements[0], statements: [] };
+                currentSection = Object.assign({ statements: [] }, parsedStatements[0]);
                 currentDivision.sections.push(currentSection);
                 continue;
             }
