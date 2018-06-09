@@ -249,7 +249,8 @@ function initializeCOBOLProgramParser(){
         var statements = [];
 
         var program = {
-            divisions: []
+            divisions: [],
+            statements: []
         };
         var currentDivision;
         var currentSection;
@@ -265,7 +266,7 @@ function initializeCOBOLProgramParser(){
             
 
             if(parsedStatements[0].STMT_TYPE==regexMap.DIVISION.STMT_TYPE){
-                currentDivision = Object.assign({ sections: [] }, parsedStatements[0]);
+                currentDivision = Object.assign({ sections: [], statements: []}, parsedStatements[0]);
                 program.divisions.push(currentDivision);
                 continue;
             }
@@ -275,7 +276,7 @@ function initializeCOBOLProgramParser(){
                 continue;
             }
 
-            currentSection.statements.push( ...parsedStatements );
+            (currentSection || currentDivision || program).statements.push( ...parsedStatements );
             
         }
         

@@ -1,41 +1,34 @@
 {
   "divisions": [
     {
+      "sections": [],
+      "statements": [],
       "STMT_TYPE": "DIVISION",
       "name": "IDENTIFICATION",
       "startedAtLine": 2,
       "endedAtLine": 2,
-      "isDivision": true,
-      "sections": []
+      "isDivision": true
     },
     {
+      "sections": [
+        {
+          "statements": [],
+          "STMT_TYPE": "SECTION",
+          "name": "CONFIGURATION",
+          "startedAtLine": 45,
+          "endedAtLine": 45
+        }
+      ],
+      "statements": [],
       "STMT_TYPE": "DIVISION",
       "name": "ENVIRONMENT",
       "startedAtLine": 42,
       "endedAtLine": 42,
-      "isDivision": true,
-      "sections": [
-        {
-          "STMT_TYPE": "SECTION",
-          "name": "CONFIGURATION",
-          "startedAtLine": 45,
-          "endedAtLine": 45,
-          "statements": []
-        }
-      ]
+      "isDivision": true
     },
     {
-      "STMT_TYPE": "DIVISION",
-      "name": "DATA",
-      "startedAtLine": 51,
-      "endedAtLine": 51,
-      "isDivision": true,
       "sections": [
         {
-          "STMT_TYPE": "SECTION",
-          "name": "WORKING-STORAGE",
-          "startedAtLine": 56,
-          "endedAtLine": 56,
           "statements": [
             {
               "STMT_TYPE": "COPY",
@@ -123,13 +116,13 @@
               "startedAtLine": 175,
               "endedAtLine": 184
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "WORKING-STORAGE",
+          "startedAtLine": 56,
+          "endedAtLine": 56
         },
         {
-          "STMT_TYPE": "SECTION",
-          "name": "LINKAGE",
-          "startedAtLine": 192,
-          "endedAtLine": 192,
           "statements": [
             {
               "STMT_TYPE": "COPY",
@@ -143,27 +136,27 @@
               "startedAtLine": 196,
               "endedAtLine": 196
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "LINKAGE",
+          "startedAtLine": 192,
+          "endedAtLine": 192
         },
         {
+          "statements": [],
           "STMT_TYPE": "SECTION",
           "name": "0000-ROTINA-PRINCIPAL",
           "startedAtLine": 203,
-          "endedAtLine": 203,
-          "statements": []
+          "endedAtLine": 203
         },
         {
+          "statements": [],
           "STMT_TYPE": "SECTION",
           "name": "1000-PROCEDIMENTOS-INICIAIS",
           "startedAtLine": 217,
-          "endedAtLine": 217,
-          "statements": []
+          "endedAtLine": 217
         },
         {
-          "STMT_TYPE": "SECTION",
-          "name": "1100-VALIDAR-SEGURANCA",
-          "startedAtLine": 239,
-          "endedAtLine": 239,
           "statements": [
             {
               "STMT_TYPE": "EXEC_CICS",
@@ -171,27 +164,27 @@
               "startedAtLine": 252,
               "endedAtLine": 257
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "1100-VALIDAR-SEGURANCA",
+          "startedAtLine": 239,
+          "endedAtLine": 239
         },
         {
+          "statements": [],
           "STMT_TYPE": "SECTION",
           "name": "1200-CONSITIR-ENTRADA",
           "startedAtLine": 285,
-          "endedAtLine": 285,
-          "statements": []
+          "endedAtLine": 285
         },
         {
+          "statements": [],
           "STMT_TYPE": "SECTION",
           "name": "2000-PROCESSAMENTO-PRINCIPAL",
           "startedAtLine": 405,
-          "endedAtLine": 405,
-          "statements": []
+          "endedAtLine": 405
         },
         {
-          "STMT_TYPE": "SECTION",
-          "name": "2100-ABRIR-CURSOR",
-          "startedAtLine": 425,
-          "endedAtLine": 425,
           "statements": [
             {
               "STMT_TYPE": "EXEC_SQL",
@@ -199,13 +192,13 @@
               "startedAtLine": 437,
               "endedAtLine": 439
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "2100-ABRIR-CURSOR",
+          "startedAtLine": 425,
+          "endedAtLine": 425
         },
         {
-          "STMT_TYPE": "SECTION",
-          "name": "2200-LER-CURSOR",
-          "startedAtLine": 460,
-          "endedAtLine": 460,
           "statements": [
             {
               "STMT_TYPE": "EXEC_SQL",
@@ -213,20 +206,20 @@
               "startedAtLine": 465,
               "endedAtLine": 470
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "2200-LER-CURSOR",
+          "startedAtLine": 460,
+          "endedAtLine": 460
         },
         {
+          "statements": [],
           "STMT_TYPE": "SECTION",
           "name": "2300-ALTERACAO-LIMITE",
           "startedAtLine": 489,
-          "endedAtLine": 489,
-          "statements": []
+          "endedAtLine": 489
         },
         {
-          "STMT_TYPE": "SECTION",
-          "name": "2400-ACESSAR-CMCD3AAC",
-          "startedAtLine": 526,
-          "endedAtLine": 526,
           "statements": [
             {
               "STMT_TYPE": "EXEC_CICS",
@@ -234,13 +227,13 @@
               "startedAtLine": 542,
               "endedAtLine": 547
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "2400-ACESSAR-CMCD3AAC",
+          "startedAtLine": 526,
+          "endedAtLine": 526
         },
         {
-          "STMT_TYPE": "SECTION",
-          "name": "2500-ACESSAR-CMCD420A",
-          "startedAtLine": 564,
-          "endedAtLine": 564,
           "statements": [
             {
               "STMT_TYPE": "EXEC_CICS",
@@ -248,13 +241,13 @@
               "startedAtLine": 592,
               "endedAtLine": 597
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "2500-ACESSAR-CMCD420A",
+          "startedAtLine": 564,
+          "endedAtLine": 564
         },
         {
-          "STMT_TYPE": "SECTION",
-          "name": "2600-ACESSAR-CMCD421A",
-          "startedAtLine": 629,
-          "endedAtLine": 629,
           "statements": [
             {
               "STMT_TYPE": "EXEC_CICS",
@@ -262,13 +255,13 @@
               "startedAtLine": 655,
               "endedAtLine": 660
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "2600-ACESSAR-CMCD421A",
+          "startedAtLine": 629,
+          "endedAtLine": 629
         },
         {
-          "STMT_TYPE": "SECTION",
-          "name": "2700-FECHAR-CURSOR",
-          "startedAtLine": 698,
-          "endedAtLine": 698,
           "statements": [
             {
               "STMT_TYPE": "EXEC_SQL",
@@ -276,41 +269,41 @@
               "startedAtLine": 703,
               "endedAtLine": 705
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "2700-FECHAR-CURSOR",
+          "startedAtLine": 698,
+          "endedAtLine": 698
         },
         {
+          "statements": [],
           "STMT_TYPE": "SECTION",
           "name": "9000-PROCEDIMENTOS-FINAIS",
           "startedAtLine": 726,
-          "endedAtLine": 726,
-          "statements": []
+          "endedAtLine": 726
         },
         {
+          "statements": [],
           "STMT_TYPE": "SECTION",
           "name": "9100-ERRO-CICS",
           "startedAtLine": 738,
-          "endedAtLine": 738,
-          "statements": []
+          "endedAtLine": 738
         },
         {
+          "statements": [],
           "STMT_TYPE": "SECTION",
           "name": "9300-ERRO-MODULO",
           "startedAtLine": 761,
-          "endedAtLine": 761,
-          "statements": []
+          "endedAtLine": 761
         },
         {
+          "statements": [],
           "STMT_TYPE": "SECTION",
           "name": "9998-TRATAR-ERRO",
           "startedAtLine": 778,
-          "endedAtLine": 778,
-          "statements": []
+          "endedAtLine": 778
         },
         {
-          "STMT_TYPE": "SECTION",
-          "name": "9999-CHAMAR-API-ERROS",
-          "startedAtLine": 803,
-          "endedAtLine": 803,
           "statements": [
             {
               "STMT_TYPE": "EXEC_CICS",
@@ -318,9 +311,20 @@
               "startedAtLine": 806,
               "endedAtLine": 811
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "9999-CHAMAR-API-ERROS",
+          "startedAtLine": 803,
+          "endedAtLine": 803
         }
-      ]
+      ],
+      "statements": [],
+      "STMT_TYPE": "DIVISION",
+      "name": "DATA",
+      "startedAtLine": 51,
+      "endedAtLine": 51,
+      "isDivision": true
     }
-  ]
+  ],
+  "statements": []
 }
