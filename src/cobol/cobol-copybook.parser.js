@@ -369,7 +369,7 @@ function initializeCOBOLCopybookParser(){
         const expanded = [];
         if(!item) return expanded;
     
-        var expandedRoot = {...item};
+        var expandedRoot = Object.assign({}, item);
         expandedRoot.dataFields = [].concat.apply([], item.fields.map((field) => {
             return expandMapDelegates[field.type](field);
         }));
@@ -377,11 +377,7 @@ function initializeCOBOLCopybookParser(){
     
         const occurs = getOccursLength(item);
         for (let i = 0; i < occurs; i++) {
-            expanded.push({
-                ...expandedRoot,
-    
-                index: i,
-            });
+            expanded.push(Object.assign({index: i}, expandedRoot));
         }
         return expanded;
     }

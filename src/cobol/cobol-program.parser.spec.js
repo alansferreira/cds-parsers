@@ -37,6 +37,39 @@ describe('Read and parse program definitions', function(){
     });
 
 
+    it('should parse cobol program statement iterator model: with exceding chars before position 6 and after position 72 ', function(){
+        var script = new String(fs.readFileSync('./src/cobol/CCP0002.CBL'));
+        
+        var sttIterator = programParser.getStatemantIterator(script);
+        var iteratee = {done: false};
+        var countStatements = 0;
+        var countStatementsWithDot = 0;
+        fs.writeFileSync('./readed-statements.CCP0002.CBL.txt', '');
+        while( iteratee.done==false ){
+            iteratee = sttIterator.next();
+            if(iteratee.value === undefined) continue;
+            
+            var {statement, startedAtLine, endedAtLine} = iteratee.value;
+            countStatements++;
+            countStatementsWithDot += (statement.endsWith('.') ? 1: 0);
+            fs.appendFileSync('./readed-statements.CCP0002.CBL.txt', `[${startedAtLine}, ${endedAtLine}]: ${statement}\n`);
+        }
+        console.log(`Statements: ${countStatements}, with dot: ${countStatementsWithDot}`);
+        assert(countStatements === countStatementsWithDot, 'error');
+    });
+
+    it('should parse cobol program: with exceding chars before position 6 and after position 72 ', function(){
+        var script = new String(fs.readFileSync('./src/cobol/CCP0002.CBL'));
+        
+        var book = programParser.parseProgram(script);
+        
+        console.log(book);
+        fs.writeFileSync('./parsed-program.CCP0002.CBL.json', JSON.stringify(book, null, 2));
+        
+        
+        assert(book.length==83, 'error');
+    });
+
 
     // it('should parse cobol program PICX', function(){
     //     var script = "       77  WRK-LOCAL                   PIC  X(004)         VALUE SPACES.";
