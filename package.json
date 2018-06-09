@@ -4,8 +4,7 @@
   "versionedSources": "bower.json",
   "description": "Common Data Structures Parsers",
   "main": "./src/index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alansferreira/cds-parsers.git"
@@ -16,8 +15,7 @@
     "url": "https://github.com/alansferreira/cds-parsers/issues"
   },
   "homepage": "https://github.com/alansferreira/cds-parsers#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "mocha": "3.3.0"
   }

@@ -217,6 +217,7 @@ function initializeCOBOLProgramParser(){
             const regexSpec = regexSpecs[m];
             const regex = regexSpec.REGEX;
             if( !regex.test(stmt) ) continue;
+            
             parsedStatements.push(...fetchAllMarches(regexSpec, stmt, startedAtLine, endedAtLine));
         
         }
