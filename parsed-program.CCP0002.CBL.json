@@ -1,54 +1,47 @@
 {
   "divisions": [
     {
+      "sections": [],
+      "statements": [],
       "STMT_TYPE": "DIVISION",
       "name": "IDENTIFICATION",
       "startedAtLine": 1,
       "endedAtLine": 1,
-      "isDivision": true,
-      "sections": []
+      "isDivision": true
     },
     {
-      "STMT_TYPE": "DIVISION",
-      "name": "ENVIRONMENT",
-      "startedAtLine": 35,
-      "endedAtLine": 35,
-      "isDivision": true,
       "sections": [
         {
-          "STMT_TYPE": "SECTION",
-          "name": "INPUT-OUTPUT",
-          "startedAtLine": 37,
-          "endedAtLine": 37,
           "statements": [
             {
               "STMT_TYPE": "FILE_CONTROL",
               "startedAtLine": 38,
               "endedAtLine": 38
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "INPUT-OUTPUT",
+          "startedAtLine": 37,
+          "endedAtLine": 37
         }
-      ]
+      ],
+      "statements": [],
+      "STMT_TYPE": "DIVISION",
+      "name": "ENVIRONMENT",
+      "startedAtLine": 35,
+      "endedAtLine": 35,
+      "isDivision": true
     },
     {
-      "STMT_TYPE": "DIVISION",
-      "name": "DATA",
-      "startedAtLine": 40,
-      "endedAtLine": 40,
-      "isDivision": true,
       "sections": [
         {
+          "statements": [],
           "STMT_TYPE": "SECTION",
           "name": "FILE",
           "startedAtLine": 42,
-          "endedAtLine": 42,
-          "statements": []
+          "endedAtLine": 42
         },
         {
-          "STMT_TYPE": "SECTION",
-          "name": "WORKING-STORAGE",
-          "startedAtLine": 49,
-          "endedAtLine": 49,
           "statements": [
             {
               "STMT_TYPE": "EXEC_SQL",
@@ -57,13 +50,13 @@
               "startedAtLine": 109,
               "endedAtLine": 109
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "WORKING-STORAGE",
+          "startedAtLine": 49,
+          "endedAtLine": 49
         },
         {
-          "STMT_TYPE": "SECTION",
-          "name": "LINKAGE",
-          "startedAtLine": 111,
-          "endedAtLine": 111,
           "statements": [
             {
               "STMT_TYPE": "EXEC_SQL",
@@ -197,9 +190,20 @@
               "startedAtLine": 383,
               "endedAtLine": 383
             }
-          ]
+          ],
+          "STMT_TYPE": "SECTION",
+          "name": "LINKAGE",
+          "startedAtLine": 111,
+          "endedAtLine": 111
         }
-      ]
+      ],
+      "statements": [],
+      "STMT_TYPE": "DIVISION",
+      "name": "DATA",
+      "startedAtLine": 40,
+      "endedAtLine": 40,
+      "isDivision": true
     }
-  ]
+  ],
+  "statements": []
 }
