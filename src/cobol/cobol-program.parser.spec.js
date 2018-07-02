@@ -1,6 +1,6 @@
-var assert = require('mocha');
-var programParser = require('./cobol-program.parser');
-var fs = require('fs');
+const assert = require('mocha');
+// var programParser = require('./cobol-program.parser');
+// var fs = require('fs');
 
 describe('Read and parse program definitions', function(){
     it('should parse cobol program statement iterator model', function(){
@@ -27,13 +27,13 @@ describe('Read and parse program definitions', function(){
     it('should parse cobol program', function(){
         var script = new String(fs.readFileSync('./src/cobol/CCP0001.CBL'));
         
-        var book = programParser.parseProgram(script);
+        var program = programParser.parseProgram(script);
         
-        console.log(book);
-        fs.writeFileSync('./parsed-program.CCP0001.CBL.json', JSON.stringify(book, null, 2));
+        console.log(program);
+        fs.writeFileSync('./parsed-program.CCP0001.CBL.json', JSON.stringify(program, null, 2));
         
         
-        assert(book.length==83, 'error');
+        assert(program.length==83, 'error');
     });
 
 
@@ -61,50 +61,62 @@ describe('Read and parse program definitions', function(){
     it('should parse cobol program: with exceding chars before position 6 and after position 72 ', function(){
         var script = new String(fs.readFileSync('./src/cobol/CCP0002.CBL'));
         
-        var book = programParser.parseProgram(script);
+        var program = programParser.parseProgram(script);
         
-        console.log(book);
-        fs.writeFileSync('./parsed-program.CCP0002.CBL.json', JSON.stringify(book, null, 2));
+        console.log(program);
+        fs.writeFileSync('./parsed-program.CCP0002.CBL.json', JSON.stringify(program, null, 2));
         
         
-        assert(book.length==83, 'error');
+        assert(program.length==83, 'error');
+    });
+
+    it('should parse cobol program: filtering only sql queries ', function(){
+        var script = new String(fs.readFileSync('./src/cobol/CCP0002.CBL'));
+        
+        var program = programParser.parseProgram(script, {filters: [programParser.parseFilters.EXEC_SQL]});
+        
+        console.log(program);
+        fs.writeFileSync('./parsed-program.CCP0002.CBL.json', JSON.stringify(program, null, 2));
+        
+        
+        assert(program.length==83, 'error');
     });
 
 
     // it('should parse cobol program PICX', function(){
     //     var script = "       77  WRK-LOCAL                   PIC  X(004)         VALUE SPACES.";
         
-    //     var book = cdsParser.COBOL.program.loadBook(script);
+    //     var program = cdsParser.COBOL.program.loadprogram(script);
         
-    //     console.log(book);
-    //     fs.writeFileSync('./parsed-book.CCP0000.CPY.json', JSON.stringify(book, null, 2));
+    //     console.log(program);
+    //     fs.writeFileSync('./parsed-program.CCP0000.CPY.json', JSON.stringify(program, null, 2));
         
         
-    //     assert(book.length==49, 'error');
+    //     assert(program.length==49, 'error');
     // });
 
     // it('should parse cobol program', function(){
     //     var script = new String(fs.readFileSync('./src/cobol/CCP0001.CBL'));
         
-    //     var book = cdsParser.COBOL.program.loadBook(script);
+    //     var program = cdsParser.COBOL.program.loadprogram(script);
         
-    //     console.log(book);
-    //     fs.writeFileSync('./parsed-book.CCP0001.CBL.json', JSON.stringify(book, null, 2));
+    //     console.log(program);
+    //     fs.writeFileSync('./parsed-program.CCP0001.CBL.json', JSON.stringify(program, null, 2));
         
         
-    //     assert(book.length==49, 'error');
+    //     assert(program.length==49, 'error');
     // });
 
     // it('should parse cobol program redefines', function(){
     //     var script = new String(fs.readFileSync('./src/cobol/CCP0000.CPY'));
         
-    //     var book = cdsParser.COBOL.program.loadBook(script);
+    //     var program = cdsParser.COBOL.program.loadprogram(script);
         
-    //     console.log(book);
-    //     fs.writeFileSync('./parsed-book.CCP0000.CPY.json', JSON.stringify(book, null, 2));
+    //     console.log(program);
+    //     fs.writeFileSync('./parsed-program.CCP0000.CPY.json', JSON.stringify(program, null, 2));
         
         
-    //     assert(book.length==49, 'error');
+    //     assert(program.length==49, 'error');
     // });
 
 });

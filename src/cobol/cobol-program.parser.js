@@ -18,9 +18,6 @@ function initializeCOBOLProgramParser(){
       */
 
 
-     /**
-      * @type {RegexSpec[]}
-      */
     const regexMap = {
         // IDENTIFICATION_DIVISION: {
         //     REGEX: / {0,}IDENTIFICATION +DIVISION {0,}\./g,
@@ -209,12 +206,12 @@ function initializeCOBOLProgramParser(){
      * @param {string} stmt 
      * @returns {ParsedStatement[]} return an yield for multiples match statements
      */
-    function parseStatemant(stmt, startedAtLine, endedAtLine){
+    function parseStatemant(stmt, startedAtLine, endedAtLine, matchFilters){
         const parsedStatements = [];
         
 
-        for (let m = 0; m < regexSpecs.length; m++) {
-            const regexSpec = regexSpecs[m];
+        for (let m = 0; m < matchFilters.length; m++) {
+            const regexSpec = matchFilters[m];
             const regex = regexSpec.REGEX;
             if( !regex.test(stmt) ) continue;
             
@@ -243,7 +240,18 @@ function initializeCOBOLProgramParser(){
         return parsedStatements;
     }
 
-    function parseProgram(content){
+    /**
+     * @typedef ParseOptions
+     * @prop {RegexSpec[]} filters filters to extract information, default is all
+     * 
+     */
+    
+    /**
+     * 
+     * @param {string} content full program cobol 
+     * @param {ParseOptions} options 
+     */
+    function parseProgram(content, options){
         var sttIterator = getStatemantIterator(content);
         var iteratee = {done: false};
         var statements = [];
@@ -255,13 +263,16 @@ function initializeCOBOLProgramParser(){
         var currentDivision;
         var currentSection;
 
+        const opt = (options || {filters: regexSpecs});
+
+
         while( iteratee.done == false ){
             iteratee = sttIterator.next();
             if(iteratee.value === undefined) continue;
             
             var {statement, startedAtLine, endedAtLine} = iteratee.value;
             
-            var parsedStatements = parseStatemant(statement, startedAtLine, endedAtLine);
+            var parsedStatements = parseStatemant(statement, startedAtLine, endedAtLine, opt.filters);
             if(!parsedStatements || parsedStatements.length == 0) continue;
             
 
@@ -285,7 +296,8 @@ function initializeCOBOLProgramParser(){
     
     var cobol_program = {
         parseProgram, 
-        getStatemantIterator
+        parseFilters: regexMap,
+        getStatemantIterator,
     };
     
    return cobol_program;

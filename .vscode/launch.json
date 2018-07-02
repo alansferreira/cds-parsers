@@ -7,15 +7,6 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Gulp task",
-            "program": "${workspaceRoot}/node_modules/gulp/bin/gulp.js",
-            "args": [
-                "default"
-            ]
-        },
-        {
-            "type": "node",
-            "request": "launch",
             "name": "Mocha Tests",
             "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
             "args": [
@@ -42,13 +33,6 @@
                 "${file}"
             ],
             "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach to Port",
-            "address": "localhost",
-            "port": 5858
         }
     ]
 }
