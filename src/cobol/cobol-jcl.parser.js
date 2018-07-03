@@ -12,26 +12,127 @@ function initializeCOBOLProgramParser(){
       * @prop {string} STMT_TYPE
       * @prop {number} startedAtLine
       * @prop {number} endedAtLine
-      * @prop {boolean} isDivision
-      * @prop {boolean} isKeywordSection
-      * @prop {boolean} isCustomSection
       */
 
+    /**
+     * @typedef ParsedJobCommand
+     * @prop {string} STMT_TYPE
+     * @prop {number} startedAtLine
+     * @prop {number} endedAtLine
+     * @prop {string} labelName
+     * @prop {string} command
+     * @prop {string} commandArgs
+     * @prop {any[]} args
+     */
 
     const regexMap = {        
-        DIVISION: {
-            REGEX: / {0,}([a-zA-Z0-9-#]+) +DIVISION {0,}\./g,
-            STMT_TYPE: 'DIVISION',
+        GENERIC_COMMAND: {
+            REGEX: /^([a-zA-Z0-9#$%]+)[ ]{1,}([a-zA-Z]+)[ ]{1,}(.+)/gi,
+            STMT_TYPE: 'GENERIC_COMMAND',
             CAP_INDEX: {
-                NAME: 1
+                LABEL_NAME: 1,
+                COMMAND: 2,
+                COMMAND_ARGS: 3
+            },
+            /** 
+             * @returns {ParsedJobCommand} 
+             */
+            toJson: (match, startedAtLine, endedAtLine) => { 
+                const json = { 
+                    STMT_TYPE: match[regexMap.GENERIC_COMMAND.CAP_INDEX.COMMAND], 
+                    labelName: regexMap.GENERIC_COMMAND.CAP_INDEX.LABEL_NAME, 
+                    command: match[regexMap.GENERIC_COMMAND.CAP_INDEX.COMMAND], 
+                    commandArgs: match[regexMap.GENERIC_COMMAND.CAP_INDEX.COMMAND_ARGS], 
+                    startedAtLine, 
+                    endedAtLine,
+                    parsedArgs: []
+                };
+                
+                for (const key in regexMap.GENERIC_COMMAND.PARAMS) {
+                    if (!regexMap.GENERIC_COMMAND.PARAMS.hasOwnProperty(key)) continue ;
+                    
+                    const subExpr = regexMap.GENERIC_COMMAND.PARAMS[key];
+                    const fetched = fetchAllMarches(subExpr,json.commandArgs).filter((s)=> s !== undefined && s !== null);
+                    if(!fetched || !fetched.length) continue;
+                    
+                    json.parsedArgs.push(...fetched);
+                }
+            
+
+
+                return json; 
+            },
+            PARAMS: {
+                GENERIC_SIMPLE: {
+                    REGEX: /,?([a-zA-Z]+)=([a-zA-Z/.0-9/*]+)/gi,
+                    STMT_TYPE: 'GENERIC_SIMPLE',
+                    CAP_INDEX: { NAME: 1, VALUE: 2 },
+                    toJson: (match) => {
+                        const capIndex = regexMap.GENERIC_COMMAND.PARAMS.GENERIC_SIMPLE.CAP_INDEX;
+                        const ret = {};
+                        ret[match[capIndex.NAME]] = match[capIndex.VALUE];
+                        return ret;
+                    }
+                },
+                GENERIC_MULTIPLE: {
+                    REGEX: /,?([a-zA-Z]+)=(\(([^\)]+)\)|([^\(\)]+))/gi,
+                    STMT_TYPE: 'GENERIC_MULTIPLE',
+                    CAP_INDEX: { NAME: 1, COMPLEX_VALUES: 3, SIMPLE_VALUE: 4 },
+                    toJson: (match) => {
+                        const capIndex = regexMap.GENERIC_COMMAND.PARAMS.GENERIC_MULTIPLE.CAP_INDEX;
+                        const ret = {};
+                        
+                        const args = (match[capIndex.COMPLEX_VALUES] 
+                            || match[capIndex.SIMPLE_VALUE]);
+                        
+                        try {
+                            
+                            ret[match[capIndex.NAME]] = args.replace(/[ ]{0,},?[ ]{0,}([a-zA-Z]+)/gi, '$1,').split(',');
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                },
+
+                GENERIC_MLTI_PAIR_VALUES: {
+                    REGEX: /,?([a-zA-Z]+)=\(([a-zA-Z0-9]+=[a-zA-Z0-9\#\$\%\'][^\)]+)\)/gi,
+                    STMT_TYPE: 'GENERIC_MLTI_PAIR_VALUES',
+                    CAP_INDEX: { NAME: 1, ARGS: 2 },
+                    toJson: (match) => {
+                        const capIndex = regexMap.GENERIC_COMMAND.PARAMS.GENERIC_MLTI_PAIR_VALUES.CAP_INDEX;
+                        const args = match[capIndex.ARGS];
+                        const ret = {};
+                        const values = {};
+
+                        args
+                        .replace(/,?([a-zA-Z]+)=([a-zA-Z0-9\#\$]+)/gi, '$1:$2\n')
+                        .split('\n')
+                        .map((p) => {
+                            values[p.split(':')[0]] = p.split(':')[1];
+                        });
+                        
+                        ret[match[capIndex.NAME]] = values;
+                        return ret;
+                    }
+                },
+            },
+        },
+        JOB_COMMAND: {
+            REGEX: /^([a-zA-Z0-9#$%]+)[ ]{1,}([a-zA-Z0-9#$%]+)[ ]{1,}(.+)/g,
+            STMT_TYPE: 'JOB_COMMAND',
+            CAP_INDEX: {
+                LABEL_NAME: 1,
+                COMMAND: 2,
+                COMMAND_ARGS: 3
             },
             toJson: (match, startedAtLine, endedAtLine) => { 
                 return { 
-                    STMT_TYPE: regexMap.DIVISION.STMT_TYPE, 
-                    name: match[regexMap.DIVISION.CAP_INDEX.NAME], 
+                    STMT_TYPE: regexMap.JOB_COMMAND.STMT_TYPE, 
+                    labelName: regexMap.JOB_COMMAND.CAP_INDEX.LABEL_NAME, 
+                    command: match[regexMap.JOB_COMMAND.CAP_INDEX.COMMAND], 
+                    commandArgs: match[regexMap.JOB_COMMAND.CAP_INDEX.COMMAND_ARGS], 
                     startedAtLine, 
                     endedAtLine, 
-                    isDivision: true 
                 }; 
             }
         }
@@ -47,7 +148,7 @@ function initializeCOBOLProgramParser(){
 
 
 
-    function* getStatemantIterator(content){
+    function* getStatementIterator(content){
         const lines = content.replace(/\r\n/g,'\n').replace(/\n\n/g,'\n').split('\n');
         var statement = '';
         var startedAtLine;
@@ -90,8 +191,12 @@ function initializeCOBOLProgramParser(){
             const regex = regexSpec.REGEX;
             if( !regex.test(stmt) ) continue;
             
-            parsedStatements.push(...fetchAllMarches(regexSpec, stmt, startedAtLine, endedAtLine));
+            const fetched = fetchAllMarches(regexSpec, stmt, startedAtLine, endedAtLine).filter((s)=> s !== undefined && s !== null);
+            if(!fetched || !fetched.length) continue;
+            
+            parsedStatements.push(...fetched);
         
+            return parsedStatements;
         }
         
         return parsedStatements;
@@ -104,7 +209,8 @@ function initializeCOBOLProgramParser(){
     function fetchAllMarches(regexSpec, stmt, startedAtLine, endedAtLine){
         var regex = regexSpec.REGEX;
         var parsedStatements = [];
-        regex.test(stmt);
+        regex.lastIndex = 0;
+        
         var m;
         while ((m = regex.exec(stmt)) !== null) {
             // This is necessary to avoid infinite loops with zero-width matches
@@ -126,13 +232,12 @@ function initializeCOBOLProgramParser(){
      * @param {string} content full program cobol 
      * @param {ParseOptions} options 
      */
-    function parseProgram(content, options){
-        var sttIterator = getStatemantIterator(content);
+    function parseJob(content, options){
+        var sttIterator = getStatementIterator(content);
         var iteratee = {done: false};
         var statements = [];
 
-        var program = {
-            divisions: [],
+        var job = {
             statements: []
         };
         var currentDivision;
@@ -151,28 +256,17 @@ function initializeCOBOLProgramParser(){
             if(!parsedStatements || parsedStatements.length == 0) continue;
             
 
-            if(parsedStatements[0].STMT_TYPE==regexMap.DIVISION.STMT_TYPE){
-                currentDivision = Object.assign({ sections: [], statements: []}, parsedStatements[0]);
-                program.divisions.push(currentDivision);
-                continue;
-            }
-            if(parsedStatements[0].STMT_TYPE==regexMap.SECTION.STMT_TYPE){
-                currentSection = Object.assign({ statements: [] }, parsedStatements[0]);
-                currentDivision.sections.push(currentSection);
-                continue;
-            }
-
-            (currentSection || currentDivision || program).statements.push( ...parsedStatements );
+            job.statements.push( ...parsedStatements );
             
         }
         
-        return program;
+        return job;
     }
     
     var cobol_program = {
-        parseProgram, 
+        parseJob, 
         parseFilters: regexMap,
-        getStatemantIterator,
+        getStatementIterator,
     };
     
    return cobol_program;
