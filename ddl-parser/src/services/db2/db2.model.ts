@@ -8,14 +8,14 @@ export interface INamedObject {
 }
 
 export interface IColumn extends INamedObject{
-    isPrimary: boolean;
-    table: null; //new Table();
+    isPrimary?: boolean;
+    table?: ITable | string;
     type: string;
     precision: number;
-    scale: number;
-    isNullable: true;
-    isAutoIncrement: boolean;
-    increment: IAutoIncrement;
+    scale?: number;
+    isNullable?: true;
+    isAutoIncrement?: boolean;
+    increment?: IAutoIncrement;
 };
 
 export interface IDatabase {
